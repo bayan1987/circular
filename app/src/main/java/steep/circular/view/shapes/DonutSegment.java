@@ -1,10 +1,12 @@
 package steep.circular.view.shapes;
 
 import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.shapes.Shape;
+
+import steep.circular.util.GraphicHelpers;
+import steep.circular.util.Point;
 
 /**
  * Created by Tom  Kretzschmar on 26.10.2016.
@@ -19,14 +21,12 @@ public class DonutSegment extends Shape {
     private float innerStartAngle;
     private float inner;
     private float outer;
-    private int x;
-    private int y;
+    private Point center;
 
-    public DonutSegment(float startAngle, float sweepAngle, float inner, float outer, int x, int y, boolean correction) {
+    public DonutSegment(float startAngle, float sweepAngle, float inner, float outer, Point center, boolean correction) {
         this.inner = inner;
         this.outer = outer;
-        this.x = x;
-        this.y = y;
+        this.center = center;
 
         if(correction) {
             float correctionValueI = 4.0f;
@@ -51,14 +51,27 @@ public class DonutSegment extends Shape {
     @Override
     public void draw(Canvas canvas, Paint paint) {
         Path segment = new Path();
-        segment.arcTo(x-inner, y-inner, x+inner, y+inner, innerStartAngle, innerSweepAngle, false);
-        segment.arcTo(x-outer, y-outer, x+outer, y+outer, outerStartAngle+outerSweepAngle, -outerSweepAngle, false);
+        segment.arcTo(center.x-inner, center.y-inner, center.x+inner, center.y+inner, innerStartAngle, innerSweepAngle, false);
+        segment.arcTo(center.x-outer, center.y-outer, center.x+outer, center.y+outer, outerStartAngle+outerSweepAngle, -outerSweepAngle, false);
         canvas.drawPath(segment, paint);
     }
 
     public Path getTextPath(){
         Path textPath = new Path();
-        textPath.arcTo(x-outer, y-outer, x+outer, y+outer, outerStartAngle, outerSweepAngle, false);
+        textPath.arcTo(center.x-outer, center.y-outer, center.x+outer, center.y+outer, outerStartAngle, outerSweepAngle, false);
         return textPath;
     }
+
+    public boolean intersects(Point point){
+        float angle = GraphicHelpers.getAngleOfPoint(point, center);
+        float radius = GraphicHelpers.getDistance(point, center);
+
+        if(outerStartAngle < angle && angle < outerSweepAngle && inner < radius && radius < outer){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 }
