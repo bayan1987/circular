@@ -1,9 +1,9 @@
 package steep.circular.util;
 
 
+import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static java.lang.Math.atan;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
@@ -27,8 +27,11 @@ public class GraphicHelpers {
     }
 
     public static float getAngleOfPoint(Point point, Point center){
-        float rad = (float) atan((point.y-center.y) / (point.x/point.y));
-        return (float) toDegrees(rad);
+        float rad = (float) atan2((point.y - center.y), (point.x - center.x));
+        float angle = (float) toDegrees(rad);
+        if(angle < 0.0f)
+            angle += 360.0;
+        return angle;
     }
 
     public static float getDistance(Point point, Point center){

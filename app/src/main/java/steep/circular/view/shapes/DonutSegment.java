@@ -5,7 +5,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.shapes.Shape;
 
-import steep.circular.util.GraphicHelpers;
 import steep.circular.util.Point;
 
 /**
@@ -63,14 +62,15 @@ public class DonutSegment extends Shape {
     }
 
     public boolean intersects(Point point){
-        float angle = GraphicHelpers.getAngleOfPoint(point, center);
-        float radius = GraphicHelpers.getDistance(point, center);
-
-        if(outerStartAngle < angle && angle < outerSweepAngle && inner < radius && radius < outer){
-            return true;
-        } else {
-            return false;
-        }
+//        float angle = GraphicHelpers.getAngleOfPoint(point, center);
+//        float radius = GraphicHelpers.getDistance(point, center);
+//
+//        if(outerStartAngle < angle && angle < outerSweepAngle && inner < radius && radius < outer){
+//            return true;
+//        } else {
+//            return false;
+//        }
+        return true;
     }
 
 

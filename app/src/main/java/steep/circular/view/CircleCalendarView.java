@@ -5,13 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.SweepGradient;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import steep.circular.data.Month;
 import steep.circular.data.Weekday;
@@ -19,14 +18,6 @@ import steep.circular.util.GraphicHelpers;
 import steep.circular.util.Point;
 import steep.circular.view.shapes.DonutSegment;
 import steep.circular.view.shapes.Marker;
-
-import static android.R.attr.angle;
-import static android.R.attr.radius;
-import static android.R.attr.x;
-import static android.R.attr.y;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.toRadians;
 
 /**
  * Created by Tom Kretzschmar on 09.10.2016.
@@ -66,9 +57,16 @@ public class CircleCalendarView extends View {
     private boolean isLeapYear;
     private Weekday firstDayOfYear;
 
+    private DonutSegment selection;
+
     private static final int DAYS_IN_SELECTION = 7;
     private static final int SELECTION_ANGLE = 90;
 
+    private static final float TOUCH_SCALE_FAC = 1f;
+    private float lastTouchAngle = 0f;
+    private boolean movingSelection = false;
+
+    private float pointerAngle = 90f;
 
 
     public CircleCalendarView(Context context) {
@@ -156,14 +154,13 @@ public class CircleCalendarView extends View {
     protected void onDraw(Canvas canvas) {
         drawSeasons(canvas);
         drawMonths(canvas);
-        drawSelection(canvas);
 
-        float startAngle = 90;
-        drawDays(canvas, linePaint, startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_MID+100, center);
+        selection = drawSelection(canvas, pointerAngle);
+
+        drawDays(canvas, linePaint, pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_MID+100, center);
         drawPointer(canvas);
-        drawEvents(canvas, weekendPaint, startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5);
-        drawEvents(canvas, vacationPaint, startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+40);
-
+        drawEvents(canvas, weekendPaint, pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5);
+        drawEvents(canvas, vacationPaint, pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+40);
     }
 
     private void drawSeasons(Canvas canvas){
@@ -194,12 +191,12 @@ public class CircleCalendarView extends View {
         }
     }
 
-    private void drawSelection(Canvas canvas){
-        float startAngle = 90;
+    private DonutSegment drawSelection(Canvas canvas, float startAngle){
         DonutSegment segInnerSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, RADIUS_SELECTION_IN, RADIUS_SELECTION_MID-5, center, false);
         DonutSegment segOuterSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_OUT, center, false);
         segInnerSelection.draw(canvas, selectionPaint);
         segOuterSelection.draw(canvas, selectionPaint);
+        return segInnerSelection;
     }
 
     private void drawPointer(Canvas canvas){
@@ -242,6 +239,37 @@ public class CircleCalendarView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        return super.onTouchEvent(event);
+
+        Point touch = new Point(event.getX(), event.getY());
+        Log.d("Touch", "onTouchEvent - " + touch);
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                Log.d("Touch", "ACTION_DOWN");
+                if(selection.intersects(touch)){
+                    Log.d("Touch", "Intersecting Selection");
+                    movingSelection = true;
+                }
+                lastTouchAngle = GraphicHelpers.getAngleOfPoint(touch, center);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.d("Touch", "ACTION_MOVE ------------------------- ");
+                float angle = GraphicHelpers.getAngleOfPoint(touch, center);
+                float diff = angle-lastTouchAngle;
+                pointerAngle += diff;
+                Log.d("Touch", "angle: " + angle);
+                Log.d("Touch", "pointer: " + pointerAngle);
+
+                lastTouchAngle = angle;
+
+                break;
+
+            case MotionEvent.ACTION_UP:
+                Log.d("Touch", "ACTION_UP");
+                pointerAngle = 90f;
+                movingSelection = false;
+                break;
+        }
+        invalidate();
+        return true;
     }
 }
