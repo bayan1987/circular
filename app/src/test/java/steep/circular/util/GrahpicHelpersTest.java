@@ -1,7 +1,5 @@
 package steep.circular.util;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
 /**
@@ -9,7 +7,7 @@ import org.junit.Test;
  *
  */
 
-public class GrahpicHelpersTest extends TestCase{
+public class GrahpicHelpersTest{
 
     @Test
     public void testGetAngleOfPoint(){
@@ -64,5 +62,21 @@ public class GrahpicHelpersTest extends TestCase{
         angle = GraphicHelpers.getAngleOfPoint(point, center); // - 90
 
         System.out.println(angle);
+    }
+
+    @Test
+    public void testGetDistance(){
+        Point center = new Point(0,0);
+        Point point = new Point(2,0);
+
+        float dist = GraphicHelpers.getDistance(point, center);
+        System.out.println("Distance: " + dist);
+
+
+        center = new Point(0,0);
+        point = new Point(1,1);
+
+        dist = GraphicHelpers.getDistance(point, center);
+        System.out.println("Distance: " + dist);
     }
 }

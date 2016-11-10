@@ -37,6 +37,6 @@ public class GraphicHelpers {
     public static float getDistance(Point point, Point center){
         float x = point.x-center.x;
         float y = point.y-center.y;
-        return (float) sqrt((x*x)/(y*y));
+        return (float) sqrt((x*x)+(y*y));
     }
 }

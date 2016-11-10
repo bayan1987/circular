@@ -197,7 +197,7 @@ public class CircleCalendarView extends View {
         DonutSegment segOuterSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_OUT, center, false);
         segInnerSelection.draw(canvas, selectionPaint);
         segOuterSelection.draw(canvas, selectionPaint);
-        return segInnerSelection;
+        return segOuterSelection;
     }
 
     private void drawPointer(Canvas canvas){
@@ -240,14 +240,14 @@ public class CircleCalendarView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-
         Point touch = new Point(event.getX(), event.getY());
         Log.d("Touch", "onTouchEvent - " + touch);
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 Log.d("Touch", "ACTION_DOWN");
                 if(selection.intersects(touch)){
-                    Log.d("Touch", "Intersecting Selection");
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                    Log.d("Touch", "########################Intersecting Selection###########################");
                     movingSelection = true;
                 }
                 lastTouchAngle = GraphicHelpers.getAngleOfPoint(touch, center);
