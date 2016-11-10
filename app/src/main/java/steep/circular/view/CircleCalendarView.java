@@ -3,8 +3,6 @@ package steep.circular.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.SweepGradient;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +10,6 @@ import android.view.View;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import steep.circular.R;
 import steep.circular.data.Month;
 import steep.circular.data.Weekday;
 import steep.circular.util.GraphicHelpers;
@@ -28,13 +25,6 @@ import steep.circular.view.shapes.Marker;
 public class CircleCalendarView extends View {
 
     private int[] sweepGradients = {0xFFed4264, 0xFF3a6186, 0xFF3a6186, 0xFF64f38c, 0xFFffedbc, 0xFFf8b500, 0xFFf8b500, 0xFFed4264};
-    private Paint linePaint;
-    private Paint textPaint;
-    private Paint textPaintWhite;
-    private Paint dayPaint;
-    private Paint weekendPaint;
-    private Paint vacationPaint;
-    private Paint selectionPaint;
     private Paint sweepPaint;
 
     private static final int RADIUS_SEASON_IN = 70;
@@ -65,9 +55,9 @@ public class CircleCalendarView extends View {
 
     private static final float TOUCH_SCALE_FAC = 1f;
     private float lastTouchAngle = 0f;
-    private boolean movingSelection = false;
 
     private float pointerAngle = 90f;
+    private PaintPool paintPool;
 
 
     public CircleCalendarView(Context context) {
@@ -92,37 +82,7 @@ public class CircleCalendarView extends View {
     }
 
     private void init(){
-        linePaint = new Paint();
-        linePaint.setColor(ContextCompat.getColor(getContext(), R.color.colorLine));
-        linePaint.setAntiAlias(true);
-        linePaint.setStrokeWidth(5);
-
-        sweepPaint = new Paint();
-        sweepPaint.setShader(new SweepGradient(center.x, center.y, sweepGradients, null));
-
-        selectionPaint = new Paint();
-        selectionPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorSelection));
-
-        textPaint = new Paint();
-        textPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorText));
-        textPaint.setTextSize(25);
-
-        textPaintWhite = new Paint();
-        textPaintWhite.setColor(ContextCompat.getColor(getContext(), R.color.colorTextW));
-        textPaintWhite.setTextSize(60);
-        textPaintWhite.setFakeBoldText(true);
-
-        dayPaint = new Paint();
-        dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
-        dayPaint.setAntiAlias(true);
-        dayPaint.setStrokeWidth(15);
-
-        weekendPaint = new Paint();
-        weekendPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorWeekend));
-
-        vacationPaint = new Paint();
-        vacationPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorVacation));
-
+        paintPool = new PaintPool(this.getContext().getApplicationContext());
         update();
     }
 
@@ -157,10 +117,10 @@ public class CircleCalendarView extends View {
 
         selection = drawSelection(canvas, pointerAngle);
 
-        drawDays(canvas, linePaint, pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_MID+100, center);
+        drawDays(canvas, paintPool.getPaint(PaintPool.LINE_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_MID+100, center);
         drawPointer(canvas);
-        drawEvents(canvas, weekendPaint, pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5);
-        drawEvents(canvas, vacationPaint, pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+40);
+        drawEvents(canvas, paintPool.getPaint(PaintPool.WEEKEND_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5);
+        drawEvents(canvas, paintPool.getPaint(PaintPool.VACATION_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+40);
     }
 
     private void drawSeasons(Canvas canvas){
@@ -187,15 +147,15 @@ public class CircleCalendarView extends View {
             segMonth.draw(canvas, sweepPaint);
             startAngle += sweepAngle;
 
-            canvas.drawTextOnPath((String.valueOf(month.name().charAt(0))), segMonth.getTextPath(), 22, 60, textPaintWhite);
+            canvas.drawTextOnPath((String.valueOf(month.name().charAt(0))), segMonth.getTextPath(), 22, 60, paintPool.getPaint(PaintPool.TEXTW_PAINT));
         }
     }
 
     private DonutSegment drawSelection(Canvas canvas, float startAngle){
         DonutSegment segInnerSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, RADIUS_SELECTION_IN, RADIUS_SELECTION_MID-5, center, false);
         DonutSegment segOuterSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_OUT, center, false);
-        segInnerSelection.draw(canvas, selectionPaint);
-        segOuterSelection.draw(canvas, selectionPaint);
+        segInnerSelection.draw(canvas, paintPool.getPaint(PaintPool.SELECTION_PAINT));
+        segOuterSelection.draw(canvas, paintPool.getPaint(PaintPool.SELECTION_PAINT));
         return segOuterSelection;
     }
 
@@ -206,12 +166,12 @@ public class CircleCalendarView extends View {
         Point start = GraphicHelpers.pointOnCircle(RADIUS_MONTH_OUT + 5, angle, center);
         Point stop = GraphicHelpers.pointOnCircle(RADIUS_MONTH_OUT + 20, angle, center);
 
-        canvas.drawLine(start.x, start.y, stop.x, stop.y, dayPaint);
+        canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(PaintPool.DAY_PAINT));
 
         start = GraphicHelpers.pointOnCircle(RADIUS_SEASON_IN - 5, angle, center);
         stop = GraphicHelpers.pointOnCircle(RADIUS_SEASON_IN - 20, angle, center);
 
-        canvas.drawLine(start.x, start.y, stop.x, stop.y, dayPaint);
+        canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(PaintPool.DAY_PAINT));
     }
 
     private void drawDays(Canvas canvas, Paint paint, float startAngle, float stretchAngle, int daycount, float inner, float outer, Point c) {
@@ -238,45 +198,33 @@ public class CircleCalendarView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         Point touch = new Point(event.getX(), event.getY());
-//        Log.d("Touch", "onTouchEvent - " + touch);
+
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-//                Log.d("Touch", "ACTION_DOWN");
                 if(selection.intersects(touch)){
                     getParent().requestDisallowInterceptTouchEvent(true);
-//                    Log.d("Touch", "########################Intersecting Selection###########################");
-                    movingSelection = true;
+                    lastTouchAngle = GraphicHelpers.getAngleOfPoint(touch, center);
+                    return true;
+                } else {
+                    return false;
                 }
-                lastTouchAngle = GraphicHelpers.getAngleOfPoint(touch, center);
-                break;
             case MotionEvent.ACTION_MOVE:
-//                Log.d("Touch", "ACTION_MOVE ------------------------- ");
                 float angle = GraphicHelpers.getAngleOfPoint(touch, center);
                 float diff = angle-lastTouchAngle;
                 pointerAngle += diff;
-//                Log.d("Touch", "angle: " + angle);
-//                Log.d("Touch", "pointer: " + pointerAngle);
-
                 lastTouchAngle = angle;
-
-                break;
-
+                invalidate();
+                return true;
             case MotionEvent.ACTION_UP:
-//                Log.d("Touch", "ACTION_UP");
 //                pointerAngle = 90f;
-                movingSelection = false;
-                break;
-
+                return true;
             case MotionEvent.ACTION_CANCEL:
                 getParent().requestDisallowInterceptTouchEvent(false);
-                movingSelection = false;
 //                pointerAngle = 90f;
-
-                break;
+                return true;
+            default:
+                return false;
         }
-        invalidate();
-        return true;
     }
 }
