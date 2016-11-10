@@ -3,4 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorPointer">#FF2244</color>
+    <color name="colorTextW">#FFFFFF</color>
+    <color name="colorText">#602020</color>
+    <color name="colorSelection">#EAE3BE</color>
+    <color name="colorLine">#202020</color>
+    <color name="colorWeekend">#42D185</color>
+    <color name="colorVacation">#428AD1</color>
 </resources>

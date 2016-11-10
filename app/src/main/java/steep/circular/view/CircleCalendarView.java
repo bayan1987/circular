@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.SweepGradient;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -12,6 +13,7 @@ import android.view.View;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import steep.circular.R;
 import steep.circular.data.Month;
 import steep.circular.data.Weekday;
 import steep.circular.util.GraphicHelpers;
@@ -92,36 +94,35 @@ public class CircleCalendarView extends View {
 
     private void init(){
         linePaint = new Paint();
-        linePaint.setColor(0x88202020);
+        linePaint.setColor(ContextCompat.getColor(getContext(), R.color.colorLine));
         linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(5);
 
         sweepPaint = new Paint();
-//        sweepPaint.setColor(0xaaffffff);
         sweepPaint.setShader(new SweepGradient(center.x, center.y, sweepGradients, null));
 
         selectionPaint = new Paint();
-        selectionPaint.setColor(0xaaeae3be);
+        selectionPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorSelection));
 
         textPaint = new Paint();
-        textPaint.setColor(0xff602020);
+        textPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorText));
         textPaint.setTextSize(25);
 
         textPaintWhite = new Paint();
-        textPaintWhite.setColor(0xffffffff);
+        textPaintWhite.setColor(ContextCompat.getColor(getContext(), R.color.colorTextW));
         textPaintWhite.setTextSize(60);
         textPaintWhite.setFakeBoldText(true);
 
         dayPaint = new Paint();
-        dayPaint.setColor(0xffff2244);
+        dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
         dayPaint.setAntiAlias(true);
         dayPaint.setStrokeWidth(15);
 
         weekendPaint = new Paint();
-        weekendPaint.setColor(0xff42d185);
+        weekendPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorWeekend));
 
         vacationPaint = new Paint();
-        vacationPaint.setColor(0xff428ad1);
+        vacationPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorVacation));
 
         update();
     }
