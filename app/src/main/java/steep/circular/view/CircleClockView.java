@@ -1,19 +1,17 @@
 package steep.circular.view;
 
 import android.content.Context;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+
+import steep.circular.R;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -56,7 +54,7 @@ public class CircleClockView extends View {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(50);
-        paint.setColor(0xff202020);
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorLine));
         paint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint2.setStyle(Paint.Style.STROKE);
         paint2.setColor(0xff20ff20);
@@ -64,7 +62,7 @@ public class CircleClockView extends View {
         paint3.setStyle(Paint.Style.STROKE);
         paint3.setStrokeWidth(10.0f);
         paint3.setStrokeCap(Paint.Cap.ROUND);
-        paint3.setColor(0xaaffffff);
+        paint3.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
 //        paint3.setColor(0x66202020);
 //        paint3.setMaskFilter(new BlurMaskFilter(20.0f, BlurMaskFilter.Blur.NORMAL));
         paint3_blur = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -77,7 +75,7 @@ public class CircleClockView extends View {
         paintRed = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintRed.setStyle(Paint.Style.STROKE);
         paintRed.setStrokeWidth(100);
-        paintRed.setColor(0xffff2020);
+        paintRed.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
         center = new Point(500,500);
     }
 
