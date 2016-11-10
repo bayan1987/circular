@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.SweepGradient;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -241,33 +240,40 @@ public class CircleCalendarView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 
         Point touch = new Point(event.getX(), event.getY());
-        Log.d("Touch", "onTouchEvent - " + touch);
+//        Log.d("Touch", "onTouchEvent - " + touch);
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                Log.d("Touch", "ACTION_DOWN");
+//                Log.d("Touch", "ACTION_DOWN");
                 if(selection.intersects(touch)){
                     getParent().requestDisallowInterceptTouchEvent(true);
-                    Log.d("Touch", "########################Intersecting Selection###########################");
+//                    Log.d("Touch", "########################Intersecting Selection###########################");
                     movingSelection = true;
                 }
                 lastTouchAngle = GraphicHelpers.getAngleOfPoint(touch, center);
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d("Touch", "ACTION_MOVE ------------------------- ");
+//                Log.d("Touch", "ACTION_MOVE ------------------------- ");
                 float angle = GraphicHelpers.getAngleOfPoint(touch, center);
                 float diff = angle-lastTouchAngle;
                 pointerAngle += diff;
-                Log.d("Touch", "angle: " + angle);
-                Log.d("Touch", "pointer: " + pointerAngle);
+//                Log.d("Touch", "angle: " + angle);
+//                Log.d("Touch", "pointer: " + pointerAngle);
 
                 lastTouchAngle = angle;
 
                 break;
 
             case MotionEvent.ACTION_UP:
-                Log.d("Touch", "ACTION_UP");
-                pointerAngle = 90f;
+//                Log.d("Touch", "ACTION_UP");
+//                pointerAngle = 90f;
                 movingSelection = false;
+                break;
+
+            case MotionEvent.ACTION_CANCEL:
+                getParent().requestDisallowInterceptTouchEvent(false);
+                movingSelection = false;
+//                pointerAngle = 90f;
+
                 break;
         }
         invalidate();
