@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Calendar;
+
 import steep.circular.view.CircleClockView;
 
 /**
@@ -69,11 +71,12 @@ public class ClockFragment extends Fragment {
     }
 
     private void update(){
+        int hour = Calendar.getInstance().get(Calendar.HOUR);
         int minute = java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE);
         int second = java.util.Calendar.getInstance().get(java.util.Calendar.SECOND);
         int millisecond = java.util.Calendar.getInstance().get(java.util.Calendar.MILLISECOND);
         if(cView != null) {
-            cView.updateClock(minute, second, millisecond);
+            cView.updateClock(hour, minute, second, millisecond);
         }
     }
 

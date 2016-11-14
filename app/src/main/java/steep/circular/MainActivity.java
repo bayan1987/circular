@@ -1,11 +1,11 @@
 package steep.circular;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,11 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import steep.circular.data.CalendarAdapter;
 import steep.circular.data.CalendarService;
-import steep.circular.data.Event;
 import steep.circular.data.LightweightEvent;
-import steep.circular.data.Occurence;
 import steep.circular.view.CircleCalendarView;
 import steep.circular.view.CircleClockView;
 
@@ -140,9 +137,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void update(){
-        int minute = Calendar.getInstance().get(Calendar.MINUTE);
-        int second = Calendar.getInstance().get(Calendar.SECOND);
-        int millisecond = Calendar.getInstance().get(Calendar.MILLISECOND);
-        cView.updateClock(minute, second, millisecond);
+        int hour = Calendar.getInstance().get(Calendar.HOUR);
+        int minute = java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE);
+        int second = java.util.Calendar.getInstance().get(java.util.Calendar.SECOND);
+        int millisecond = java.util.Calendar.getInstance().get(java.util.Calendar.MILLISECOND);
+        if(cView != null) {
+            cView.updateClock(hour, minute, second, millisecond);
+        }
     }
 }

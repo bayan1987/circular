@@ -6,8 +6,13 @@
     <color name="colorPointer">#FF2244</color>
     <color name="colorTextW">#FFFFFF</color>
     <color name="colorText">#602020</color>
-    <color name="colorSelection">#EAE3BE</color>
-    <color name="colorLine">#202020</color>
+    <color name="colorSelection">#B2DFDB</color>
+    <color name="colorLine">#00897B</color>
     <color name="colorWeekend">#42D185</color>
     <color name="colorVacation">#428AD1</color>
+
+    <color name="colorSpring">#9CCC65</color>
+    <color name="colorSummer">#FFEE58</color>
+    <color name="colorAutumn">#FF7043</color>
+    <color name="colorWinter">#7E57C2</color>
 </resources>

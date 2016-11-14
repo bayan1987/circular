@@ -25,6 +25,13 @@ public class PaintPool {
     public static final int WEEKEND_PAINT = 6;
     public static final int VACATION_PAINT = 7;
 
+    public static final int WINTER_PAINT = 8;
+    public static final int SPRING_PAINT = 9;
+    public static final int SUMMER_PAINT = 10;
+    public static final int AUTUMN_PAINT = 11;
+
+    public static final int DATE_PAINT = 12;
+
     private HashMap<Integer, Paint> paintMap;
 
     public PaintPool(Context context) {
@@ -47,8 +54,8 @@ public class PaintPool {
 
         Paint textPaintWhite = new Paint();
         textPaintWhite.setColor(ContextCompat.getColor(context, R.color.colorTextW));
-        textPaintWhite.setTextSize(60);
-        textPaintWhite.setFakeBoldText(true);
+//        textPaintWhite.setTextSize(60);
+        textPaintWhite.setTextSize(30);
         paintMap.put(TEXTW_PAINT, textPaintWhite);
 
         Paint dayPaint = new Paint();
@@ -64,6 +71,27 @@ public class PaintPool {
         Paint vacationPaint = new Paint();
         vacationPaint.setColor(ContextCompat.getColor(context, R.color.colorVacation));
         paintMap.put(VACATION_PAINT, vacationPaint);
+
+        Paint springPaint = new Paint();
+        springPaint.setColor(ContextCompat.getColor(context, R.color.colorSpring));
+        paintMap.put(SPRING_PAINT, springPaint);
+
+        Paint summerPaint = new Paint();
+        summerPaint.setColor(ContextCompat.getColor(context, R.color.colorSummer));
+        paintMap.put(SUMMER_PAINT, summerPaint);
+
+        Paint autumnPaint = new Paint();
+        autumnPaint.setColor(ContextCompat.getColor(context, R.color.colorAutumn));
+        paintMap.put(AUTUMN_PAINT, autumnPaint);
+
+        Paint winterPaint = new Paint();
+        winterPaint.setColor(ContextCompat.getColor(context, R.color.colorWinter));
+        paintMap.put(WINTER_PAINT, winterPaint);
+
+        Paint datePaint = new Paint();
+        datePaint.setColor(ContextCompat.getColor(context, R.color.colorLine));
+        datePaint.setTextSize(45);
+        paintMap.put(DATE_PAINT, datePaint);
     }
 
     public Paint getPaint(int paintType){
