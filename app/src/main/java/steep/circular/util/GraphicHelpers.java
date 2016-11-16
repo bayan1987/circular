@@ -19,6 +19,13 @@ public class GraphicHelpers {
         return pointOnCircle(radius, angle, new Point(0,0));
     }
 
+    /**
+     *
+     * @param radius
+     * @param angle Angle in degrees
+     * @param center
+     * @return Point
+     */
     public static Point pointOnCircle(float radius, float angle, Point center){
         float x = center.x + (float) cos(toRadians(angle)) * (radius);
         float y = center.y + (float) sin(toRadians(angle)) * (radius);

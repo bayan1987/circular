@@ -45,6 +45,7 @@ public class PaintPool {
 
         Paint selectionPaint = new Paint();
         selectionPaint.setColor(ContextCompat.getColor(context, R.color.colorSelection));
+        selectionPaint.setAntiAlias(true);
         paintMap.put(SELECTION_PAINT, selectionPaint);
 
         Paint textPaint = new Paint();
@@ -66,30 +67,37 @@ public class PaintPool {
 
         Paint weekendPaint = new Paint();
         weekendPaint.setColor(ContextCompat.getColor(context, R.color.colorWeekend));
+        weekendPaint.setAntiAlias(true);
         paintMap.put(WEEKEND_PAINT, weekendPaint);
 
         Paint vacationPaint = new Paint();
         vacationPaint.setColor(ContextCompat.getColor(context, R.color.colorVacation));
+        vacationPaint.setAntiAlias(true);
         paintMap.put(VACATION_PAINT, vacationPaint);
 
         Paint springPaint = new Paint();
         springPaint.setColor(ContextCompat.getColor(context, R.color.colorSpring));
+        springPaint.setAntiAlias(true);
         paintMap.put(SPRING_PAINT, springPaint);
 
         Paint summerPaint = new Paint();
         summerPaint.setColor(ContextCompat.getColor(context, R.color.colorSummer));
+        summerPaint.setAntiAlias(true);
         paintMap.put(SUMMER_PAINT, summerPaint);
 
         Paint autumnPaint = new Paint();
         autumnPaint.setColor(ContextCompat.getColor(context, R.color.colorAutumn));
+        autumnPaint.setAntiAlias(true);
         paintMap.put(AUTUMN_PAINT, autumnPaint);
 
         Paint winterPaint = new Paint();
         winterPaint.setColor(ContextCompat.getColor(context, R.color.colorWinter));
+        winterPaint.setAntiAlias(true);
         paintMap.put(WINTER_PAINT, winterPaint);
 
         Paint datePaint = new Paint();
         datePaint.setColor(ContextCompat.getColor(context, R.color.colorLine));
+        datePaint.setAntiAlias(true);
         datePaint.setTextSize(45);
         paintMap.put(DATE_PAINT, datePaint);
     }

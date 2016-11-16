@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <!--<color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    -->
+
+    <color name="colorPrimary">#b9f6ca</color>
+    <color name="colorPrimaryDark">#00c853</color>
+    <color name="colorAccent">#ff1744</color>
+    <color name="colorBackground">#37474f</color>
+
     <color name="colorPointer">#FF2244</color>
     <color name="colorTextW">#FFFFFF</color>
     <color name="colorText">#602020</color>
@@ -15,4 +22,7 @@
     <color name="colorSummer">#FFEE58</color>
     <color name="colorAutumn">#FF7043</color>
     <color name="colorWinter">#7E57C2</color>
+
+
+
 </resources>

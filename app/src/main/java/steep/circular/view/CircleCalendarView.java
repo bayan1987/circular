@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PathMeasure;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -12,6 +13,8 @@ import android.view.View;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import steep.circular.R;
+import steep.circular.TabbedMainActivity;
 import steep.circular.data.Month;
 import steep.circular.data.Weekday;
 import steep.circular.util.GraphicHelpers;
@@ -86,6 +89,8 @@ public class CircleCalendarView extends View {
     }
 
     private void init(){
+        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
+        center.x = TabbedMainActivity.center_x;
         paintPool = new PaintPool(this.getContext().getApplicationContext());
 //        sweepPaint = new Paint();
 //        sweepPaint.setShader(new SweepGradient(center.x, center.y, sweepGradients, null));
