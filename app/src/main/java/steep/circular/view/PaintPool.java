@@ -38,13 +38,13 @@ public class PaintPool {
         paintMap = new HashMap<>();
 
         Paint linePaint = new Paint();
-        linePaint.setColor(ContextCompat.getColor(context, R.color.colorLine));
+        linePaint.setColor(ContextCompat.getColor(context, R.color.colorBackground));
         linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(5);
         paintMap.put(LINE_PAINT, linePaint);
 
         Paint selectionPaint = new Paint();
-        selectionPaint.setColor(ContextCompat.getColor(context, R.color.colorSelection));
+        selectionPaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
         selectionPaint.setAntiAlias(true);
         paintMap.put(SELECTION_PAINT, selectionPaint);
 
@@ -96,9 +96,9 @@ public class PaintPool {
         paintMap.put(WINTER_PAINT, winterPaint);
 
         Paint datePaint = new Paint();
-        datePaint.setColor(ContextCompat.getColor(context, R.color.colorLine));
+        datePaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
         datePaint.setAntiAlias(true);
-        datePaint.setTextSize(45);
+        datePaint.setTextSize(35);
         paintMap.put(DATE_PAINT, datePaint);
     }
 

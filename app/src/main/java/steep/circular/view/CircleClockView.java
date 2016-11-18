@@ -8,18 +8,27 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import steep.circular.R;
-import steep.circular.TabbedMainActivity;
 import steep.circular.util.GraphicHelpers;
 import steep.circular.util.Point;
 
 
 public class CircleClockView extends View {
 
-    private static final int clockRadiusInner = 260;
-    private static final int clockRadiusOuter = 310;
-    private static final int clockRadiusMiddleIn = 270;
-    private static final int clockRadiusMiddleOut = 300;
-    private static final int clockRadiusScale = 100;
+
+
+    private static final int RAD_IN_DP = 100;
+    private static final int RAD_INMID_DP = 105;
+    private static final int RAD_OUTMID_DP = 120;
+    private static final int RAD_OUT_DP = 125;
+    private static final int RAD_SCALE_DP = 40;
+
+    private static final int STROKE_WIDTH_DP = 4;
+
+    private int clockRadiusInner;
+    private int clockRadiusOuter;
+    private int clockRadiusMiddleIn;
+    private int clockRadiusMiddleOut;
+    private int clockRadiusScale;
 
     private Paint paintStrokes;
     private Paint paintAccent;
@@ -31,6 +40,9 @@ public class CircleClockView extends View {
 
     private boolean filling = true;
     private boolean isSet = false;
+
+    private int width = 0;
+    private int height = 0;
 
 
     public CircleClockView(Context context, AttributeSet attrs) {
@@ -44,30 +56,38 @@ public class CircleClockView extends View {
     }
 
     private void init() {
+        final float scale = getResources().getDisplayMetrics().density;
+        clockRadiusInner = (int)(RAD_IN_DP * scale + 0.5f);
+        clockRadiusMiddleIn = (int)(RAD_INMID_DP * scale + 0.5f);
+        clockRadiusMiddleOut = (int)(RAD_OUTMID_DP * scale + 0.5f);
+        clockRadiusOuter = (int)(RAD_OUT_DP * scale + 0.5f);
+        clockRadiusScale = (int)(RAD_SCALE_DP * scale + 0.5f);
+
+        float strokeWidth = (int)(STROKE_WIDTH_DP * scale + 0.5f);
+
         paintStrokes = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintStrokes.setStyle(Paint.Style.STROKE);
-        paintStrokes.setStrokeWidth(10.0f);
+        paintStrokes.setStrokeWidth(strokeWidth);
         paintStrokes.setStrokeCap(Paint.Cap.ROUND);
         paintStrokes.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
         paintAccent = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintAccent.setStyle(Paint.Style.STROKE);
-        paintAccent.setStrokeWidth(10.0f);
+        paintAccent.setStrokeWidth(strokeWidth);
         paintAccent.setStrokeCap(Paint.Cap.ROUND);
         paintAccent.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
-//        paintAccent.setMaskFilter(new BlurMaskFilter(20.0f, BlurMaskFilter.Blur.NORMAL));
-//        paintStrokes.setShadowLayer(40.0f, 0.0f, 0.0f, Color.BLACK);
-
-        center = new Point(500, 500);
-        center.x = TabbedMainActivity.center_x;
 
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        float xPad = getPaddingLeft() + getPaddingRight();
-        float yPad = getPaddingTop() + getPaddingBottom();
+        int xPad = getPaddingLeft() + getPaddingRight();
+        int yPad = getPaddingTop() + getPaddingBottom();
 
+        width = w - xPad;
+        height = h - yPad;
+
+        center = new Point(w/2, h/2);
 
         super.onSizeChanged(w, h, oldw, oldh);
     }

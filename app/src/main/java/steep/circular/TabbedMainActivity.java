@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +19,7 @@ import steep.circular.fragments.ClockFragment;
 public class TabbedMainActivity extends AppCompatActivity {
 
 
-    public static int center_x = 0;
+//    public static int center_x = 0;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -40,10 +39,6 @@ public class TabbedMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        center_x = dm.widthPixels / 2;
 
         setContentView(R.layout.activity_tabbed_main);
 
@@ -110,9 +105,9 @@ public class TabbedMainActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position){
                 case 0:
-                    return CalendarFragment.newInstance(position);
-                case 1:
                     return ClockFragment.newInstance(position);
+                case 1:
+                    return CalendarFragment.newInstance(position);
                 default:
                     return null;
             }
@@ -120,7 +115,7 @@ public class TabbedMainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
+            // Show 2 total pages.
             return 2;
         }
 
@@ -128,11 +123,9 @@ public class TabbedMainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "Clock";
                 case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
+                    return "Calendar";
             }
             return null;
         }

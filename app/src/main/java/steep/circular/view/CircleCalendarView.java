@@ -14,7 +14,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import steep.circular.R;
-import steep.circular.TabbedMainActivity;
 import steep.circular.data.Month;
 import steep.circular.data.Weekday;
 import steep.circular.util.GraphicHelpers;
@@ -31,18 +30,25 @@ import static steep.circular.view.PaintPool.DATE_PAINT;
 
 public class CircleCalendarView extends View {
 
-//    private int[] sweepGradients = {0xFFed4264, 0xFF3a6186, 0xFF3a6186, 0xFF64f38c, 0xFFffedbc, 0xFFf8b500, 0xFFf8b500, 0xFFed4264};
-//    private Paint sweepPaint;
+    private static final int RAD_SEASON_IN = 40;
+    private static final int RAD_SEASON_OUT = 50;
+    private static final int RAD_MONTH_IN = 55;
+    private static final int RAD_MONTH_OUT = 80;
+    private static final int RAD_SELECTION_IN = 90;
+    private static final int RAD_SELECTION_MID = 110;
+    private static final int RAD_SELECTION_OUT = 190;
 
-    private static final int RADIUS_SEASON_IN = 100;
-    private static final int RADIUS_SEASON_OUT = 120;
-    private static final int RADIUS_MONTH_IN = 130;
-    private static final int RADIUS_MONTH_OUT = 200;
-    private static final int RADIUS_SELECTION_IN = 225;
-    private static final int RADIUS_SELECTION_MID = 275;
-    private static final int RADIUS_SELECTION_OUT = 475;
+    private int radiusSeasonIn;
+    private int radiusSeasonOut;
+    private int radiusMonthIn;
+    private int radiusMonthOut;
+    private int radiusSelectionIn;
+    private int radiusSelectionMid;
+    private int radiusSelectionOut;
 
-    private final Point center = new Point(500,500);
+    private Point center;
+    private int width;
+    private int height;
 
     private float anglePerDay;
 
@@ -89,12 +95,17 @@ public class CircleCalendarView extends View {
     }
 
     private void init(){
+        final float scale = getResources().getDisplayMetrics().density;
+        radiusSeasonIn = (int)(RAD_SEASON_IN * scale + 0.5f);
+        radiusSeasonOut = (int)(RAD_SEASON_OUT * scale + 0.5f);
+        radiusMonthIn = (int)(RAD_MONTH_IN * scale + 0.5f);
+        radiusMonthOut = (int)(RAD_MONTH_OUT * scale + 0.5f);
+        radiusSelectionIn = (int)(RAD_SELECTION_IN * scale + 0.5f);
+        radiusSelectionMid = (int)(RAD_SELECTION_MID * scale + 0.5f);
+        radiusSelectionOut = (int)(RAD_SELECTION_OUT * scale + 0.5f);
+
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
-        center.x = TabbedMainActivity.center_x;
         paintPool = new PaintPool(this.getContext().getApplicationContext());
-//        sweepPaint = new Paint();
-//        sweepPaint.setShader(new SweepGradient(center.x, center.y, sweepGradients, null));
-        Log.d("View", "INIT");
         update();
     }
 
@@ -119,6 +130,14 @@ public class CircleCalendarView extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        int xPad = getPaddingLeft() + getPaddingRight();
+        int yPad = getPaddingTop() + getPaddingBottom();
+
+        width = w - xPad;
+        height = h - yPad;
+
+        center = new Point(w/2, h/3);
+
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
@@ -130,10 +149,10 @@ public class CircleCalendarView extends View {
 
         selection = drawSelection(canvas, pointerAngle);
 
-        drawDays(canvas, paintPool.getPaint(PaintPool.LINE_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_OUT, center);
+        drawDays(canvas, paintPool.getPaint(PaintPool.LINE_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, radiusSelectionMid +5, radiusSelectionOut, center);
         drawPointer(canvas);
-        drawEvents(canvas, paintPool.getPaint(PaintPool.WEEKEND_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+5);
-        drawEvents(canvas, paintPool.getPaint(PaintPool.VACATION_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, RADIUS_SELECTION_MID+40);
+        drawEvents(canvas, paintPool.getPaint(PaintPool.WEEKEND_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, radiusSelectionMid +5);
+        drawEvents(canvas, paintPool.getPaint(PaintPool.VACATION_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, radiusSelectionMid +40);
 
         drawDate(canvas);
     }
@@ -157,7 +176,7 @@ public class CircleCalendarView extends View {
         int startSeason = PaintPool.WINTER_PAINT;
         for(int i = 0; i<4; i++){
             float sweepAngle = 90;
-            DonutSegment segSeason = new DonutSegment(startAngle, sweepAngle, RADIUS_SEASON_IN, RADIUS_SEASON_OUT, center, true);
+            DonutSegment segSeason = new DonutSegment(startAngle, sweepAngle, radiusSeasonIn, radiusSeasonOut, center, true);
             segSeason.draw(canvas, paintPool.getPaint(startSeason + i));
             startAngle += sweepAngle;
         }
@@ -173,7 +192,7 @@ public class CircleCalendarView extends View {
             } else {
                 sweepAngle = month.getDayCount() * anglePerDay;
             }
-            DonutSegment segMonth = new DonutSegment(startAngle, sweepAngle, RADIUS_MONTH_IN, RADIUS_MONTH_OUT, center, true);
+            DonutSegment segMonth = new DonutSegment(startAngle, sweepAngle, radiusMonthIn, radiusMonthOut, center, true);
             segMonth.draw(canvas, paintPool.getPaint(month.getSeason()));
             startAngle += sweepAngle;
 
@@ -187,8 +206,8 @@ public class CircleCalendarView extends View {
     }
 
     private DonutSegment drawSelection(Canvas canvas, float startAngle){
-        DonutSegment segInnerSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, RADIUS_SELECTION_IN, RADIUS_SELECTION_MID-5, center, false);
-        DonutSegment segOuterSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, RADIUS_SELECTION_MID+5, RADIUS_SELECTION_OUT, center, false);
+        DonutSegment segInnerSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, radiusSelectionIn, radiusSelectionMid -5, center, false);
+        DonutSegment segOuterSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, radiusSelectionMid +5, radiusSelectionOut, center, false);
         segInnerSelection.draw(canvas, paintPool.getPaint(PaintPool.SELECTION_PAINT));
         segOuterSelection.draw(canvas, paintPool.getPaint(PaintPool.SELECTION_PAINT));
         return segOuterSelection;
@@ -198,13 +217,13 @@ public class CircleCalendarView extends View {
 
         float angle = currentDayOfYear * anglePerDay + 90;
 
-        Point start = GraphicHelpers.pointOnCircle(RADIUS_MONTH_OUT + 5, angle, center);
-        Point stop = GraphicHelpers.pointOnCircle(RADIUS_MONTH_OUT + 20, angle, center);
+        Point start = GraphicHelpers.pointOnCircle(radiusMonthOut + 5, angle, center);
+        Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut + 20, angle, center);
 
         canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(PaintPool.DAY_PAINT));
 
-        start = GraphicHelpers.pointOnCircle(RADIUS_SEASON_IN - 5, angle, center);
-        stop = GraphicHelpers.pointOnCircle(RADIUS_SEASON_IN - 20, angle, center);
+        start = GraphicHelpers.pointOnCircle(radiusSeasonIn - 5, angle, center);
+        stop = GraphicHelpers.pointOnCircle(radiusSeasonIn - 20, angle, center);
 
         canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(PaintPool.DAY_PAINT));
     }
@@ -252,11 +271,13 @@ public class CircleCalendarView extends View {
                 invalidate();
                 return true;
             case MotionEvent.ACTION_UP:
-//                pointerAngle = 90f;
+                pointerAngle = 90f;
+                invalidate();
                 return true;
             case MotionEvent.ACTION_CANCEL:
                 getParent().requestDisallowInterceptTouchEvent(false);
-//                pointerAngle = 90f;
+                pointerAngle = 90f;
+                invalidate();
                 return true;
             default:
                 return false;
