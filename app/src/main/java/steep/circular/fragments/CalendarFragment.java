@@ -2,10 +2,17 @@ package steep.circular.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Date;
+import java.util.List;
+
+import steep.circular.data.Calendar;
+import steep.circular.data.CalendarService;
+import steep.circular.data.LightweightEvent;
 import steep.circular.view.CircleCalendarView;
 
 /**
@@ -21,7 +28,22 @@ public class CalendarFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     public CalendarFragment() {
-
+        Thread calendarQueryThread;
+        Runnable calQueryRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Date start = new Date(1478294632055l);
+                Date end = new Date(1485810000000l);
+                CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
+                List<Calendar> calendars = calSrv.getAllEvents(start, end);
+                List<LightweightEvent> lightEvents = calSrv.getLightweightEvents(start, end);
+                for(LightweightEvent event : lightEvents){
+                    Log.d("Cal", "LightEvent: [" + event.getDate() + "] - " + event.getTitle() + " - " + event.getId() + " - " + event.getCal_id() + " - " + event.getCal_title());
+                }
+            }
+        };
+        calendarQueryThread = new Thread(calQueryRunnable);
+        calendarQueryThread.start();
     }
 
     /**
