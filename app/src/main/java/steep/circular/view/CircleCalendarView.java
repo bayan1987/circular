@@ -2,6 +2,7 @@ package steep.circular.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PathMeasure;
 import android.support.v4.content.ContextCompat;
@@ -12,8 +13,10 @@ import android.view.View;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import steep.circular.R;
+import steep.circular.data.LightweightEvent;
 import steep.circular.data.Month;
 import steep.circular.data.Weekday;
 import steep.circular.util.GraphicHelpers;
@@ -22,6 +25,7 @@ import steep.circular.view.shapes.DonutSegment;
 import steep.circular.view.shapes.Marker;
 
 import static steep.circular.view.PaintPool.DATE_PAINT;
+import static steep.circular.view.PaintPool.SELECTION_PAINT;
 
 /**
  * Created by Tom Kretzschmar on 09.10.2016.
@@ -72,6 +76,8 @@ public class CircleCalendarView extends View {
     private float pointerAngle = 90f;
     private PaintPool paintPool;
 
+    private List<List<LightweightEvent>> events;
+
 
     public CircleCalendarView(Context context) {
         super(context);
@@ -106,10 +112,12 @@ public class CircleCalendarView extends View {
 
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
         paintPool = new PaintPool(this.getContext().getApplicationContext());
-        update();
+        update(null);
     }
 
-    public void update(){
+    public void update(List<List<LightweightEvent>> events){
+        this.events = events;
+
         Calendar cal = Calendar.getInstance();
         currentYear = cal.get(Calendar.YEAR);
         currentMonth = cal.get(Calendar.MONTH);
@@ -151,8 +159,8 @@ public class CircleCalendarView extends View {
 
         drawDays(canvas, paintPool.getPaint(PaintPool.LINE_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, radiusSelectionMid +5, radiusSelectionOut, center);
         drawPointer(canvas);
-        drawEvents(canvas, paintPool.getPaint(PaintPool.WEEKEND_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, radiusSelectionMid +5);
-        drawEvents(canvas, paintPool.getPaint(PaintPool.VACATION_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, radiusSelectionMid +40);
+//        drawEvents(canvas, paintPool.getPaint(PaintPool.WEEKEND_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, radiusSelectionMid +5);
+//        drawEvents(canvas, paintPool.getPaint(PaintPool.VACATION_PAINT), pointerAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, DAYS_IN_SELECTION, radiusSelectionMid +40);
 
         drawDate(canvas);
     }
@@ -208,8 +216,10 @@ public class CircleCalendarView extends View {
     private DonutSegment drawSelection(Canvas canvas, float startAngle){
         DonutSegment segInnerSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, radiusSelectionIn, radiusSelectionMid -5, center, false);
         DonutSegment segOuterSelection = new DonutSegment(startAngle + currentDayOfYear*anglePerDay, SELECTION_ANGLE, radiusSelectionMid +5, radiusSelectionOut, center, false);
-        segInnerSelection.draw(canvas, paintPool.getPaint(PaintPool.SELECTION_PAINT));
-        segOuterSelection.draw(canvas, paintPool.getPaint(PaintPool.SELECTION_PAINT));
+//        segInnerSelection.draw(canvas, paintPool.getPaint(PaintPool.SELECTION_PAINT));
+//        segOuterSelection.draw(canvas, paintPool.getPaint(PaintPool.SELECTION_PAINT));
+
+        drawPoints(canvas, null, startAngle, anglePerDay, radiusSelectionIn+5, radiusSelectionMid-5);
         return segOuterSelection;
     }
 
@@ -217,19 +227,28 @@ public class CircleCalendarView extends View {
 
         float angle = currentDayOfYear * anglePerDay + 90;
 
-        Point start = GraphicHelpers.pointOnCircle(radiusMonthOut + 5, angle, center);
-        Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut + 20, angle, center);
+//        Point start = GraphicHelpers.pointOnCircle(radiusMonthOut + 5, angle, center);
+//        Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut + 20, angle, center);
+//
+//        canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(PaintPool.DAY_PAINT));
+//
+//        start = GraphicHelpers.pointOnCircle(radiusSeasonIn - 5, angle, center);
+//        stop = GraphicHelpers.pointOnCircle(radiusSeasonIn - 20, angle, center);
 
-        canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(PaintPool.DAY_PAINT));
+        Point start = GraphicHelpers.pointOnCircle(radiusSelectionMid + 5, angle, center);
+        Point stop = GraphicHelpers.pointOnCircle(radiusSeasonIn -20, angle, center);
 
-        start = GraphicHelpers.pointOnCircle(radiusSeasonIn - 5, angle, center);
-        stop = GraphicHelpers.pointOnCircle(radiusSeasonIn - 20, angle, center);
+        Paint datePaint = new Paint();
+        datePaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        datePaint.setAntiAlias(true);
+        datePaint.setShadowLayer(25, 2.5f, 0f, Color.BLACK);
+        datePaint.setStrokeWidth(3);
+        datePaint.setStrokeCap(Paint.Cap.ROUND);
 
-        canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(PaintPool.DAY_PAINT));
+        canvas.drawLine(start.x, start.y, stop.x, stop.y, datePaint);
     }
 
     private void drawDays(Canvas canvas, Paint paint, float startAngle, float stretchAngle, int daycount, float inner, float outer, Point c) {
-
         for (int i = 1; i < daycount; i++) {
             startAngle += (stretchAngle / daycount);
 
@@ -238,6 +257,61 @@ public class CircleCalendarView extends View {
 
             canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
         }
+    }
+
+    private void drawPoints(Canvas canvas, Paint paint, float startAngle, float anglePerDay, float inner, float outer){
+        DonutSegment ds = new DonutSegment(0, 360f, inner, outer, center, false);
+        ds.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
+        int space = (int) ((outer - inner) / 5);
+        startAngle = 0f;
+        for(int i = 0; i<365; i++){ // TODO daysinyear
+
+
+//        if(events != null && events.get(i) != null) {
+//            for (int j = 0; j < events.get(i).size(); j++) {
+//
+//
+//                Paint dayPaint = new Paint();
+//                dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
+//                dayPaint.setAntiAlias(true);
+//                dayPaint.setStrokeCap(Paint.Cap.ROUND);
+//                dayPaint.setStrokeWidth(4);
+//
+//                Point p = GraphicHelpers.pointOnCircle(inner + (j * space), startAngle, center);
+//                canvas.drawPoint(p.x, p.y, dayPaint);
+//            }
+//        }
+
+            for(int j = 0; j < (int)(0.5+(Math.random()*4)); j++){
+
+
+
+                Paint dayPaint = new Paint();
+                dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
+                dayPaint.setAntiAlias(true);
+                dayPaint.setStrokeCap(Paint.Cap.ROUND);
+                dayPaint.setStrokeWidth(4);
+
+                Point p = GraphicHelpers.pointOnCircle(inner + (j*space), startAngle, center);
+                canvas.drawPoint(p.x, p.y, dayPaint);
+            }
+
+
+
+            startAngle = startAngle + anglePerDay;
+        }
+    }
+
+    private void drawEvents(int startDay, int endDay){// TODO
+        for (int i = startDay; i<=endDay; i++){
+            for (LightweightEvent event : events.get(i)){
+                drawMarker(i-startDay, event.getTitle(), (int)event.getId());
+            }
+        }
+    }
+
+    private void drawMarker(int dayInSelection, String title, int id){ // TODO
+
     }
 
     private void drawEvents(Canvas canvas, Paint paint, float startAngle, float stretchAngle, int daycount, float radius){
@@ -282,5 +356,9 @@ public class CircleCalendarView extends View {
             default:
                 return false;
         }
+    }
+
+    public void setEvents(List<List<LightweightEvent>> list) {
+        this.events = list;
     }
 }

@@ -62,7 +62,7 @@ public class PaintPool {
         Paint dayPaint = new Paint();
         dayPaint.setColor(ContextCompat.getColor(context, R.color.colorPointer));
         dayPaint.setAntiAlias(true);
-        dayPaint.setStrokeWidth(15);
+        dayPaint.setStrokeWidth(5);
         paintMap.put(DAY_PAINT, dayPaint);
 
         Paint weekendPaint = new Paint();
@@ -99,6 +99,8 @@ public class PaintPool {
         datePaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
         datePaint.setAntiAlias(true);
         datePaint.setTextSize(35);
+        datePaint.setStrokeWidth(3);
+        datePaint.setStrokeCap(Paint.Cap.ROUND);
         paintMap.put(DATE_PAINT, datePaint);
     }
 

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,19 +28,39 @@ public class CalendarFragment extends Fragment {
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
+    private CircleCalendarView view;
+    private List<List<LightweightEvent>> list;
+
     public CalendarFragment() {
         Thread calendarQueryThread;
         Runnable calQueryRunnable = new Runnable() {
             @Override
             public void run() {
-                Date start = new Date(1478294632055l);
-                Date end = new Date(1485810000000l);
+
+                long currentTime = System.currentTimeMillis();
+                long year = 31536000000l;
+                long day = 86400000l;
+
+                Date start = new Date(currentTime);
+                Date end = new Date(currentTime + year);
                 CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
                 List<Calendar> calendars = calSrv.getAllEvents(start, end);
                 List<LightweightEvent> lightEvents = calSrv.getLightweightEvents(start, end);
+
+                list = new ArrayList<>();
+                for(int i = 0; i<365; i++){
+                    list.add(i, new ArrayList<LightweightEvent>());
+                }
+
                 for(LightweightEvent event : lightEvents){
                     Log.d("Cal", "LightEvent: [" + event.getDate() + "] - " + event.getTitle() + " - " + event.getId() + " - " + event.getCal_id() + " - " + event.getCal_title());
+//
+//                    int d = (int) (event.getDate().getTime()-currentTime)/1000/60/60/24;
+//                    Log.d("debEVENT", "D: " + d);
+//                    list.get(d).add(event);
                 }
+
+
             }
         };
         calendarQueryThread = new Thread(calQueryRunnable);
@@ -64,7 +85,8 @@ public class CalendarFragment extends Fragment {
 //        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 //        textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 //        return rootView;
-        CircleCalendarView view = new CircleCalendarView(this.getActivity().getApplicationContext());
+        view = new CircleCalendarView(this.getActivity().getApplicationContext());
+        view.setEvents(list);
         return view;
     }
 }
