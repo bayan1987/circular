@@ -2,18 +2,15 @@ package steep.circular.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import steep.circular.data.Calendar;
 import steep.circular.data.CalendarService;
 import steep.circular.data.LightweightEvent;
+import steep.circular.data.MyDate;
 import steep.circular.view.CircleCalendarView;
 
 /**
@@ -37,30 +34,30 @@ public class CalendarFragment extends Fragment {
             @Override
             public void run() {
 
-                long currentTime = System.currentTimeMillis();
-                long year = 31536000000l;
-                long day = 86400000l;
-
-                Date start = new Date(currentTime);
-                Date end = new Date(currentTime + year);
-                CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
-                List<Calendar> calendars = calSrv.getAllEvents(start, end);
-                List<LightweightEvent> lightEvents = calSrv.getLightweightEvents(start, end);
-
-                list = new ArrayList<>();
-                for(int i = 0; i<365; i++){
-                    list.add(i, new ArrayList<LightweightEvent>());
-                }
-
-                for(LightweightEvent event : lightEvents){
-                    Log.d("Cal", "LightEvent: [" + event.getDate() + "] - " + event.getTitle() + " - " + event.getId() + " - " + event.getCal_id() + " - " + event.getCal_title());
+//                long currentTime = System.currentTimeMillis();
+//                long year = 31536000000l;
+//                long day = 86400000l;
 //
+//                Date start = new Date(currentTime);
+//                Date end = new Date(currentTime + year);
+//                CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
+//                List<Calendar> calendars = calSrv.getAllEvents(start, end);
+//                List<LightweightEvent> lightEvents = calSrv.getLightweightEvents(start, end);
+//
+//                list = new ArrayList<>();
+//                for(int i = 0; i<365; i++){
+//                    list.add(i, new ArrayList<LightweightEvent>());
+//                }
+//
+//                for(LightweightEvent event : lightEvents){
+//                    Log.d("Cal", "LightEvent: [" + event.getDate() + "] - " + event.getTitle() + " - " + event.getId() + " - " + event.getCal_id() + " - " + event.getCal_title());
+////
 //                    int d = (int) (event.getDate().getTime()-currentTime)/1000/60/60/24;
 //                    Log.d("debEVENT", "D: " + d);
 //                    list.get(d).add(event);
-                }
-
-
+//                }
+                CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
+                list = calSrv.getEventPerDayList(new MyDate(30,11,2016), new MyDate(20,11,2017));
             }
         };
         calendarQueryThread = new Thread(calQueryRunnable);
