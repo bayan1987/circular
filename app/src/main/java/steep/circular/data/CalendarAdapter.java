@@ -52,7 +52,7 @@ public class CalendarAdapter {
             long calID = cursor.getLong(0);
             String displayName = cursor.getString(1);
             String ownerName = cursor.getString(2);
-            String color = cursor.getString(3);
+            int color = cursor.getInt(3);
 
             Calendar cal = new Calendar(calID, displayName, ownerName, color);
             calendars.add(cal);
@@ -94,14 +94,14 @@ public class CalendarAdapter {
 
             Date date = new Date(cursor.getLong(2));
 
-            Log.d("Cal", "Event: [" + cursor.getString(1) + "] " + date.getDate() + "." + date.getMonth() + "." + date.getYear() + " -> " + cursor.getString(1));
+//            Log.d("Cal", "Event: [" + cursor.getString(1) + "] " + date.getDate() + "." + date.getMonth() + "." + date.getYear() + " -> " + cursor.getString(1));
 
             long eventID = cursor.getLong(0);
             String title = cursor.getString(1);
             boolean reoccuring = (cursor.getString(2) != null);
             Date startEvent = new Date(cursor.getLong(3));
             Date endEvent = new Date(cursor.getLong(4));
-            String color = cursor.getString(5);
+            int color = cursor.getInt(5);
 
             Event event = new Event(eventID, title, reoccuring, startEvent, endEvent, color);
             events.add(event);
@@ -129,7 +129,7 @@ public class CalendarAdapter {
         while (cursor.moveToNext()) {
             Date date = new Date(cursor.getLong(1));
 
-            Log.d("Cal", "Occurence: " + date);
+//            Log.d("Cal", "Occurence: " + date);
             Occurence occurence = new Occurence(0, date);
             occurences.add(occurence);
         }

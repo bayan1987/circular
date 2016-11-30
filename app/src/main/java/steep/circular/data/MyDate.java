@@ -28,8 +28,31 @@ public class MyDate {
         year = cal.get(Calendar.YEAR);
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MyDate myDate = (MyDate) o;
+
+        if (day != myDate.day) return false;
+        if (month != myDate.month) return false;
+        return year == myDate.year;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = day;
+        result = 31 * result + month;
+        result = 31 * result + year;
+        return result;
+    }
+
     public MyDate(Date date) {
         this(date.getTime());
+
     }
 
     public long getTimeInMillis(){

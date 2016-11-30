@@ -14,11 +14,11 @@ public class Event {
     private boolean reoccuring;
     private Date begin;
     private Date end;
-    private String color;
+    private int color;
 
     private List<Occurence> occurences;
 
-    public Event(long id, String title, boolean reoccuring, Date begin, Date end, String color) {
+    public Event(long id, String title, boolean reoccuring, Date begin, Date end, int color) {
         this.id = id;
         this.title = title;
         this.reoccuring = reoccuring;
@@ -73,11 +73,11 @@ public class Event {
         this.end = end;
     }
 
-    public String getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         this.color = color;
     }
 

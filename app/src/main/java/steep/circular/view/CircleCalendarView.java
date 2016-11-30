@@ -34,13 +34,21 @@ import static steep.circular.view.PaintPool.SELECTION_PAINT;
 
 public class CircleCalendarView extends View {
 
-    private static final int RAD_SEASON_IN = 40;
-    private static final int RAD_SEASON_OUT = 50;
-    private static final int RAD_MONTH_IN = 55;
-    private static final int RAD_MONTH_OUT = 80;
-    private static final int RAD_SELECTION_IN = 90;
-    private static final int RAD_SELECTION_MID = 110;
-    private static final int RAD_SELECTION_OUT = 190;
+//    private static final int RAD_SEASON_IN = 40;
+//    private static final int RAD_SEASON_OUT = 50;
+//    private static final int RAD_MONTH_IN = 55;
+//    private static final int RAD_MONTH_OUT = 80;
+//    private static final int RAD_SELECTION_IN = 90;
+//    private static final int RAD_SELECTION_MID = 110;
+//    private static final int RAD_SELECTION_OUT = 190;
+
+    private static final int RAD_SEASON_IN = 80;
+    private static final int RAD_SEASON_OUT = 90;
+    private static final int RAD_MONTH_IN = 95;
+    private static final int RAD_MONTH_OUT = 125;
+    private static final int RAD_SELECTION_IN = 135;
+    private static final int RAD_SELECTION_MID = 170;
+    private static final int RAD_SELECTION_OUT = 200;
 
     private int radiusSeasonIn;
     private int radiusSeasonOut;
@@ -242,7 +250,7 @@ public class CircleCalendarView extends View {
         datePaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
         datePaint.setAntiAlias(true);
         datePaint.setShadowLayer(25, 2.5f, 0f, Color.BLACK);
-        datePaint.setStrokeWidth(3);
+        datePaint.setStrokeWidth(4);
         datePaint.setStrokeCap(Paint.Cap.ROUND);
 
         canvas.drawLine(start.x, start.y, stop.x, stop.y, datePaint);
@@ -263,21 +271,23 @@ public class CircleCalendarView extends View {
         DonutSegment ds = new DonutSegment(0, 360f, inner, outer, center, false);
         ds.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
         int space = (int) ((outer - inner) / 5);
-        startAngle = 0f;
+        startAngle = 90f;
         for (int i = 0; i < 365; i++) { // TODO daysinyear
 
 
             if (events != null && events.get(i) != null) {
-                Log.d("dPoint", "IF, evSize=" + events.get(i).size());
+//                Log.d("dPoint", "IF, evSize=" + events.get(i).size());
                 for (int j = 0; j < events.get(i).size(); j++) {
-                    Log.d("dPoint", "FOR - " + j);
+//                    Log.d("dPoint", "FOR - " + j);
                     Paint dayPaint = new Paint();
-                    dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
+//                    dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
                     dayPaint.setAntiAlias(true);
                     dayPaint.setStrokeCap(Paint.Cap.ROUND);
-                    dayPaint.setStrokeWidth(4);
+                    dayPaint.setStrokeWidth(10);
 
-                    if (i == 0) dayPaint.setColor(Color.WHITE);
+                    dayPaint.setColor(events.get(i).get(j).getColor());
+
+//                    if (i < 30) dayPaint.setColor(Color.WHITE);
                     Point p = GraphicHelpers.pointOnCircle(inner + (j * space), startAngle, center);
                     canvas.drawPoint(p.x, p.y, dayPaint);
                 }

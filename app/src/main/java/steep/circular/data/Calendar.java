@@ -13,13 +13,13 @@ public class Calendar {
     private long id;
     private String title;
     private String owner;
-    private String color;
+    private int color;
     private boolean showCalendar;
 
     private List<Event> events;
 
 
-    public Calendar(long id, String title, String owner, String color) {
+    public Calendar(long id, String title, String owner, int color) {
         this.id = id;
         this.title = title;
         this.owner = owner;
@@ -52,11 +52,11 @@ public class Calendar {
         this.owner = owner;
     }
 
-    public String getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         this.color = color;
     }
 
