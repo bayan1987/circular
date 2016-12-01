@@ -24,7 +24,7 @@ public class MyDate {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(timeInMillis);
         day = cal.get(Calendar.DAY_OF_MONTH);
-        month = cal.get(Calendar.MONTH);
+        month = cal.get(Calendar.MONTH)+1;
         year = cal.get(Calendar.YEAR);
     }
 
@@ -57,7 +57,7 @@ public class MyDate {
 
     public long getTimeInMillis(){
         Calendar cal = Calendar.getInstance();
-        cal.set(year, month, day);
+        cal.set(year, month-1, day);
         return cal.getTimeInMillis();
     }
 
@@ -67,7 +67,7 @@ public class MyDate {
 
     public int getDayOfYear(){
         Calendar cal = Calendar.getInstance();
-        cal.set(year, month, day);
+        cal.set(year, month-1, day);
         return cal.get(Calendar.DAY_OF_YEAR);
     }
 
