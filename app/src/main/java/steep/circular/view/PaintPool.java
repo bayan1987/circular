@@ -50,13 +50,14 @@ public class PaintPool {
 
         Paint textPaint = new Paint();
         textPaint.setColor(ContextCompat.getColor(context, R.color.colorText));
-        textPaint.setTextSize(25);
+        textPaint.setTextSize(40);
         paintMap.put(TEXT_PAINT, textPaint);
 
         Paint textPaintWhite = new Paint();
         textPaintWhite.setColor(ContextCompat.getColor(context, R.color.colorTextW));
 //        textPaintWhite.setTextSize(60);
-        textPaintWhite.setTextSize(30);
+        textPaintWhite.setTextSize(40);
+//        textPaintWhite.setTypeface(Typeface.MONOSPACE);
         paintMap.put(TEXTW_PAINT, textPaintWhite);
 
         Paint dayPaint = new Paint();
@@ -98,7 +99,7 @@ public class PaintPool {
         Paint datePaint = new Paint();
         datePaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
         datePaint.setAntiAlias(true);
-        datePaint.setTextSize(35);
+        datePaint.setTextSize(60);
         datePaint.setStrokeWidth(3);
         datePaint.setStrokeCap(Paint.Cap.ROUND);
         paintMap.put(DATE_PAINT, datePaint);

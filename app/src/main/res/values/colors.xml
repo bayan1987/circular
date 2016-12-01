@@ -18,10 +18,10 @@
     <color name="colorWeekend">#42D185</color>
     <color name="colorVacation">#428AD1</color>
 
-    <color name="colorSpring">#9CCC65</color>
-    <color name="colorSummer">#FFEE58</color>
-    <color name="colorAutumn">#FF7043</color>
-    <color name="colorWinter">#7E57C2</color>
+    <color name="colorSpring">#8bc34a</color>
+    <color name="colorSummer">#FDD835</color>
+    <color name="colorAutumn">#ef6c00</color>
+    <color name="colorWinter">#3f51b5</color>
 
 
 
