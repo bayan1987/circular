@@ -34,14 +34,6 @@ import static steep.circular.view.PaintPool.SELECTION_PAINT;
 
 public class CircleCalendarView extends View {
 
-//    private static final int RAD_SEASON_IN = 40;
-//    private static final int RAD_SEASON_OUT = 50;
-//    private static final int RAD_MONTH_IN = 55;
-//    private static final int RAD_MONTH_OUT = 80;
-//    private static final int RAD_SELECTION_IN = 90;
-//    private static final int RAD_SELECTION_MID = 110;
-//    private static final int RAD_SELECTION_OUT = 190;
-
     private static final int RAD_SEASON_IN = 80;
     private static final int RAD_SEASON_OUT = 90;
     private static final int RAD_MONTH_IN = 95;
@@ -118,8 +110,6 @@ public class CircleCalendarView extends View {
         radiusSelectionMid = (int)(RAD_SELECTION_MID * scale + 0.5f);
         radiusSelectionOut = (int)(RAD_SELECTION_OUT * scale + 0.5f);
 
-//        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
-//        setBackgroundColor(Color.WHITE);
         paintPool = new PaintPool(this.getContext().getApplicationContext());
         update(null);
     }
@@ -153,7 +143,7 @@ public class CircleCalendarView extends View {
         width = w - xPad;
         height = h - yPad;
 
-        center = new Point(w/2, h/3);
+        center = new Point(w/2, h/2.5f);
 
         super.onSizeChanged(w, h, oldw, oldh);
     }
@@ -236,25 +226,17 @@ public class CircleCalendarView extends View {
 
         float angle = currentDayOfYear * anglePerDay + 90;
 
-//        Point start = GraphicHelpers.pointOnCircle(radiusMonthOut + 5, angle, center);
-//        Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut + 20, angle, center);
-//
-//        canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(PaintPool.DAY_PAINT));
-//
-//        start = GraphicHelpers.pointOnCircle(radiusSeasonIn - 5, angle, center);
-//        stop = GraphicHelpers.pointOnCircle(radiusSeasonIn - 20, angle, center);
-
         Point start = GraphicHelpers.pointOnCircle(radiusSelectionMid + 5, angle, center);
         Point stop = GraphicHelpers.pointOnCircle(radiusSeasonIn -20, angle, center);
 
-        Paint datePaint = new Paint();
-        datePaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
-        datePaint.setAntiAlias(true);
-        datePaint.setShadowLayer(25, 2.5f, 0f, Color.BLACK);
-        datePaint.setStrokeWidth(4);
-        datePaint.setStrokeCap(Paint.Cap.ROUND);
+        Paint paint = new Paint();
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        paint.setAntiAlias(true);
+        paint.setShadowLayer(25, 2.5f, 0f, Color.BLACK);
+        paint.setStrokeWidth(4);
+        paint.setStrokeCap(Paint.Cap.ROUND);
 
-        canvas.drawLine(start.x, start.y, stop.x, stop.y, datePaint);
+        canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
     }
 
     private void drawDays(Canvas canvas, Paint paint, float startAngle, float stretchAngle, int daycount, float inner, float outer, Point c) {
@@ -287,7 +269,6 @@ public class CircleCalendarView extends View {
                     canvas.drawPoint(p.x, p.y, dayPaint);
                 }
             }
-
             startAngle = startAngle + anglePerDay;
         }
     }

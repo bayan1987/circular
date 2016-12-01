@@ -24,8 +24,9 @@ import java.util.List;
 public class CalendarAdapter {
 
     private Context context;
-    private String account_Name = "tkretzschmar94@googlemail.com";
-    private String account_Type = "com.google";
+    // TODO: account name & type from user / no input
+    private static final String ACCOUNT_NAME = "tkretzschmar94@googlemail.com";
+    private static final String ACCOUNT_TYPE = "com.google";
 
     public CalendarAdapter(Context context) {
         this.context = context;
@@ -43,7 +44,7 @@ public class CalendarAdapter {
         String selection = "((" +
                 CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND (" +
                 CalendarContract.Calendars.ACCOUNT_TYPE + " = ?))";
-        String[] selectionArgs = new String[]{account_Name, account_Type};
+        String[] selectionArgs = new String[]{ACCOUNT_NAME, ACCOUNT_TYPE};
 
         Cursor cursor = query(uri, projection, selection, selectionArgs);
         if(cursor == null) return null;

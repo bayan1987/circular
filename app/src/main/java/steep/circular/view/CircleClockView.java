@@ -76,7 +76,7 @@ public class CircleClockView extends View {
         paintAccent.setStrokeCap(Paint.Cap.ROUND);
         paintAccent.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
 
-        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
+//        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class CircleClockView extends View {
         width = w - xPad;
         height = h - yPad;
 
-        center = new Point(w/2, h/2);
+        center = new Point(w/2, h/2.5f);
 
         super.onSizeChanged(w, h, oldw, oldh);
     }

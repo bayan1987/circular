@@ -16,7 +16,8 @@ import steep.circular.R;
 import steep.circular.view.CircleClockView;
 
 /**
- * Created by Tom on 22.09.2016.
+ * Created by Tom Kretzschmar on 22.09.2016.
+ *
  */
 
 public class ClockWidgetProvider extends AppWidgetProvider {
