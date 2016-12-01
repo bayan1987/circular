@@ -56,7 +56,7 @@ public class CalendarAdapter {
 
             Calendar cal = new Calendar(calID, displayName, ownerName, color);
             calendars.add(cal);
-            Log.d("Cal", displayName + "|" + ownerName + "|" + color);
+            Log.d("available Calendars", displayName + "|" + ownerName + "|" + color);
         }
         cursor.close();
         return calendars;
@@ -134,6 +134,52 @@ public class CalendarAdapter {
             occurences.add(occurence);
         }
         cursor.close();
+        return occurences;
+    }
+
+    public List<LightweightEvent> queryOccurences(Calendar calendar, Date start, Date end) {
+
+        String selection = "(" + CalendarContract.Events.CALENDAR_ID + " = ?)";
+        String i = String.valueOf(calendar.getId());
+        String[] selectionArgs = new String[]{i};
+
+        String[] projection = {
+                CalendarContract.Instances._ID,
+                CalendarContract.Instances.BEGIN,
+                CalendarContract.Instances.END,
+                CalendarContract.Instances.EVENT_COLOR,
+                CalendarContract.Instances.TITLE};
+
+//        String selection = CalendarContract.Instances.EVENT_ID + " = ?";
+//        String[] selectionArgs = new String[]{String.valueOf(event.getId())};
+
+        Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();
+        ContentUris.appendId(builder, start.getTime());
+        ContentUris.appendId(builder, end.getTime());
+
+        Cursor cursor = query(builder.build(), projection, selection, selectionArgs);
+
+        List<LightweightEvent> occurences = new ArrayList<>();
+        List<Long> ids = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            Date s = new Date(cursor.getLong(1));
+            Date e = new Date(cursor.getLong(2));
+
+//            Log.d("Cal", "Occurence: " + date);
+            LightweightEvent event = new LightweightEvent(cursor.getLong(0), cursor.getString(4), s, calendar.getId(), calendar.getTitle(), cursor.getInt(3), e);
+            Log.i("LightweightEventQuery", event.getId() + "    |    " + event.getCal_title() + "|" + event.getTitle() + "|" + s + "-" + e);
+
+
+            if(!ids.contains(event.getId())){
+                ids.add(event.getId());
+            } else {
+                Log.e("LightweightEventQuery", "###################### ID " + event.getId() + "|" + event.getTitle() +" ALREADY CONTAINED #########################");
+            }
+
+            occurences.add(event);
+        }
+        cursor.close();
+
         return occurences;
     }
 

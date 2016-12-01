@@ -12,9 +12,29 @@ public class LightweightEvent {
     private long id;
     private String title;
     private Date date;
+    private Date end;
     private long cal_id;
     private String cal_title;
     private int color;
+
+    public Date getEnd() {
+        return end;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
+    public LightweightEvent(long id, String title, Date date, long cal_id, String cal_title, int color, Date end) {
+        this.color = color;
+        this.id = id;
+        this.title = title;
+        this.date = date;
+        this.cal_id = cal_id;
+        this.cal_title = cal_title;
+        this.end = end;
+
+    }
 
     public int getColor() {
         return color;
@@ -71,5 +91,6 @@ public class LightweightEvent {
         this.date = date;
         this.cal_id = cal_id;
         this.cal_title = cal_title;
+        this.end = null;
     }
 }

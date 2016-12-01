@@ -283,7 +283,7 @@ public class CircleCalendarView extends View {
 //                    dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
                     dayPaint.setAntiAlias(true);
                     dayPaint.setStrokeCap(Paint.Cap.ROUND);
-                    dayPaint.setStrokeWidth(10);
+                    dayPaint.setStrokeWidth(12);
 
                     dayPaint.setColor(events.get(i).get(j).getColor());
 
