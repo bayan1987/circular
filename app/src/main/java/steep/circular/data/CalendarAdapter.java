@@ -73,13 +73,10 @@ public class CalendarAdapter {
                 CalendarContract.Events.DTEND,
                 CalendarContract.Events.EVENT_COLOR};
 
-
         String selection = "((" +
                 CalendarContract.Events.CALENDAR_ID + " = ?) AND (" +
                 CalendarContract.Events.DTSTART  + " > ?) AND (" +
                 CalendarContract.Events.DTSTART  + " < ?))";
-
-
 
         String i = String.valueOf(calendar.getId());
         String s = String.valueOf(start.getTime());
@@ -111,7 +108,6 @@ public class CalendarAdapter {
     }
 
     public List<Occurence> queryOccurences(Event event, Date start, Date end){
-
         String[] projection = {
                 CalendarContract.Instances._ID,
                 CalendarContract.Instances.BEGIN};
@@ -138,7 +134,6 @@ public class CalendarAdapter {
     }
 
     public List<LightweightEvent> queryOccurences(Calendar calendar, Date start, Date end) {
-
         String selection = "(" + CalendarContract.Events.CALENDAR_ID + " = ?)";
         String i = String.valueOf(calendar.getId());
         String[] selectionArgs = new String[]{i};
@@ -150,9 +145,6 @@ public class CalendarAdapter {
                 CalendarContract.Instances.EVENT_COLOR,
                 CalendarContract.Instances.TITLE};
 
-//        String selection = CalendarContract.Instances.EVENT_ID + " = ?";
-//        String[] selectionArgs = new String[]{String.valueOf(event.getId())};
-
         Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();
         ContentUris.appendId(builder, start.getTime());
         ContentUris.appendId(builder, end.getTime());
@@ -161,21 +153,11 @@ public class CalendarAdapter {
 
         List<LightweightEvent> occurences = new ArrayList<>();
         List<Long> ids = new ArrayList<>();
+
         while (cursor.moveToNext()) {
             Date s = new Date(cursor.getLong(1));
             Date e = new Date(cursor.getLong(2));
-
-//            Log.d("Cal", "Occurence: " + date);
             LightweightEvent event = new LightweightEvent(cursor.getLong(0), cursor.getString(4), s, calendar.getId(), calendar.getTitle(), cursor.getInt(3), e);
-            Log.i("LightweightEventQuery", event.getId() + "    |    " + event.getCal_title() + "|" + event.getTitle() + "|" + s + "-" + e);
-
-
-            if(!ids.contains(event.getId())){
-                ids.add(event.getId());
-            } else {
-                Log.e("LightweightEventQuery", "###################### ID " + event.getId() + "|" + event.getTitle() +" ALREADY CONTAINED #########################");
-            }
-
             occurences.add(event);
         }
         cursor.close();
@@ -187,7 +169,7 @@ public class CalendarAdapter {
         Cursor cursor;
         ContentResolver cr = context.getContentResolver();
 
-        // Check Permissions
+        // TODO Check and ask for calendar read permission
         if(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_DENIED) {
             return null;
         }

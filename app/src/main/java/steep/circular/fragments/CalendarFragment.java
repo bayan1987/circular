@@ -64,7 +64,7 @@ public class CalendarFragment extends Fragment {
 //        textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 //        return rootView;
         CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
-        list = calSrv.getEventPerDayList(new MyDate(30,11,2016), new MyDate(20,11,2017));
+        list = calSrv.getEventPerDayList(new MyDate(1,12,2016), new MyDate(30,11,2017));
         view = new CircleCalendarView(this.getActivity().getApplicationContext());
         view.setEvents(list);
         return view;

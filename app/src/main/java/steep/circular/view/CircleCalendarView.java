@@ -118,7 +118,8 @@ public class CircleCalendarView extends View {
         radiusSelectionMid = (int)(RAD_SELECTION_MID * scale + 0.5f);
         radiusSelectionOut = (int)(RAD_SELECTION_OUT * scale + 0.5f);
 
-        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
+//        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
+//        setBackgroundColor(Color.WHITE);
         paintPool = new PaintPool(this.getContext().getApplicationContext());
         update(null);
     }
@@ -273,40 +274,19 @@ public class CircleCalendarView extends View {
         int space = (int) ((outer - inner) / 5);
         startAngle = 90f;
         for (int i = 0; i < 365; i++) { // TODO daysinyear
-
-
             if (events != null && events.get(i) != null) {
-//                Log.d("dPoint", "IF, evSize=" + events.get(i).size());
                 for (int j = 0; j < events.get(i).size(); j++) {
-//                    Log.d("dPoint", "FOR - " + j);
                     Paint dayPaint = new Paint();
-//                    dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
                     dayPaint.setAntiAlias(true);
                     dayPaint.setStrokeCap(Paint.Cap.ROUND);
                     dayPaint.setStrokeWidth(12);
 
                     dayPaint.setColor(events.get(i).get(j).getColor());
 
-//                    if (i < 30) dayPaint.setColor(Color.WHITE);
                     Point p = GraphicHelpers.pointOnCircle(inner + (j * space), startAngle, center);
                     canvas.drawPoint(p.x, p.y, dayPaint);
                 }
             }
-
-//            for(int j = 0; j < (int)(0.5+(Math.random()*4)); j++){
-//
-//
-//
-//                Paint dayPaint = new Paint();
-//                dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
-//                dayPaint.setAntiAlias(true);
-//                dayPaint.setStrokeCap(Paint.Cap.ROUND);
-//                dayPaint.setStrokeWidth(4);
-//
-//                Point p = GraphicHelpers.pointOnCircle(inner + (j*space), startAngle, center);
-//                canvas.drawPoint(p.x, p.y, dayPaint);
-//            }
-
 
             startAngle = startAngle + anglePerDay;
         }

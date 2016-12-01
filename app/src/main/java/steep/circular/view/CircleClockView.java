@@ -16,13 +16,13 @@ public class CircleClockView extends View {
 
 
 
-    private static final int RAD_IN_DP = 100;
-    private static final int RAD_INMID_DP = 105;
-    private static final int RAD_OUTMID_DP = 120;
-    private static final int RAD_OUT_DP = 125;
-    private static final int RAD_SCALE_DP = 40;
+    private static final int RAD_IN_DP = 80;
+    private static final int RAD_INMID_DP = 85;
+    private static final int RAD_OUTMID_DP = 100;
+    private static final int RAD_OUT_DP = 105;
+    private static final int RAD_SCALE_DP = 30;
 
-    private static final int STROKE_WIDTH_DP = 4;
+    private static final int STROKE_WIDTH_DP = 3;
 
     private int clockRadiusInner;
     private int clockRadiusOuter;
