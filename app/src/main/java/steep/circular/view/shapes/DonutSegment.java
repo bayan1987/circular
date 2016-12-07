@@ -79,6 +79,4 @@ public class DonutSegment extends Shape {
             return false;
         }
     }
-
-
 }

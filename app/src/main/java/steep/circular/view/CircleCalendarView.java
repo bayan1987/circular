@@ -76,11 +76,13 @@ public class CircleCalendarView extends View {
     private PaintPool paintPool;
     private Ring eventRing;
 
+    private DonutSegment seg;
+
     boolean touched = false;
     float currentDrawAngle = 0.0f;
     float velocity;
 
-    float lastTime;
+    double lastTime;
 
     private List<List<Event>> events;
 
@@ -164,14 +166,26 @@ public class CircleCalendarView extends View {
         drawMonths(canvas);
         eventRing.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
 
-//        float a = 2.0f;
 
         if(touched){
-//            float dt = System.currentTimeMillis() - lastTime;
-//            float diff = lastTouchAngle - currentDrawAngle;
+            double dt = System.currentTimeMillis() - lastTime;
+//            Log.d("dt", "DT:" + dt + "|" + System.currentTimeMillis() + "-" + lastTime);
+            float diff = lastTouchAngle - currentDrawAngle;
+//            if(diff > 180) diff = 180 - diff;
+//            else if(diff < - 180) diff = 180 + diff;
+//
+//            velocity = (float)(diff * dt * 0.001f); //0.008
+//            currentDrawAngle += velocity ;
+//
+//
+//            if(currentDrawAngle < 0) currentDrawAngle = 360 - currentDrawAngle;
+//            if(currentDrawAngle > 360) currentDrawAngle = currentDrawAngle - 360;
+            float angle = currentDrawAngle - 45;
 
-            DonutSegment seg = new DonutSegment(currentDrawAngle -45, 90, radiusSelectionIn, radiusSelectionMid, center, false);
+            seg = new DonutSegment(angle, 90, radiusSelectionIn, radiusSelectionMid, center, false);
             seg.draw(canvas, paintPool.getPaint(SELECTION_PAINT_DARK));
+            lastTime = System.currentTimeMillis();
+
         }
 
         drawEventPoints(canvas, null, startAngle, anglePerDay, radiusSelectionIn+5, radiusSelectionMid-5);
@@ -244,6 +258,7 @@ public class CircleCalendarView extends View {
         canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
     }
 
+    // TODO draw in bitmap/etc. to get better performance
     private void drawEventPoints(Canvas canvas, Paint paint, float startAngle, float anglePerDay, float inner, float outer) {
         DonutSegment ds = new DonutSegment(0, 360f, inner, outer, center, false);
         ds.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
@@ -280,10 +295,9 @@ public class CircleCalendarView extends View {
                     touched = true;
 
                     lastTouchAngle = angle;
-//                    currentDrawAngle = angle;
-//                    lastTouchAngle = angle;
-//                    velocity = 0.0f;
-//                    lastTime = System.currentTimeMillis();
+                    currentDrawAngle = angle;
+
+                    lastTime = System.currentTimeMillis();
 
                     getParent().requestDisallowInterceptTouchEvent(true);
                     return true;
@@ -292,25 +306,14 @@ public class CircleCalendarView extends View {
                 }
             case MotionEvent.ACTION_MOVE:
                 lastTouchAngle = getAngleOfPoint(touch, center);
-//                float angle = getAngleOfPoint(touch, center);
-//                float diff = angle-lastTouchAngle;
-//
-//                float dt = System.currentTimeMillis() - lastTime;
-//
-//
-//                velocity = diff * 0.2f;
-//
-//                currentDrawAngle = currentDrawAngle + velocity;
-//
-//                pointerAngle += diff;
-//                lastTouchAngle = angle;
-//                lastTime = System.currentTimeMillis();
+
                 invalidate();
                 return true;
             case MotionEvent.ACTION_UP:
                 pointerAngle = 90f;
                 touched = false;
                 invalidate();
+
                 return true;
             case MotionEvent.ACTION_CANCEL:
                 getParent().requestDisallowInterceptTouchEvent(false);
