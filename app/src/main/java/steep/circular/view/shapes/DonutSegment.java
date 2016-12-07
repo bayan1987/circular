@@ -48,6 +48,13 @@ public class DonutSegment extends Shape {
         super.onResize(width, height);
     }
 
+    /**
+     * Draw this shape into the provided Canvas, with the provided Paint.
+     * Before calling this, you must call {@link #resize(float, float)}.
+     *
+     * @param canvas the Canvas within which this shape should be drawn
+     * @param paint  the Paint object that defines this shape's characteristics
+     */
     @Override
     public void draw(Canvas canvas, Paint paint) {
         Path segment = new Path();

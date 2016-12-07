@@ -1,7 +1,5 @@
 package steep.circular.data;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Tom Kretzschmar on 03.11.2016.
@@ -16,16 +14,12 @@ public class Calendar {
     private int color;
     private boolean showCalendar;
 
-    private List<Event> events;
-
 
     public Calendar(long id, String title, String owner, int color) {
         this.id = id;
         this.title = title;
         this.owner = owner;
         this.color = color;
-
-        events = new ArrayList<>();
     }
 
     public long getId() {
@@ -66,17 +60,5 @@ public class Calendar {
 
     public void setShowCalendar(boolean showCalendar) {
         this.showCalendar = showCalendar;
-    }
-
-    public void addEvent(Event event){
-        events.add(event);
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
-
-    public List<Event> getEvents(){
-        return events;
     }
 }

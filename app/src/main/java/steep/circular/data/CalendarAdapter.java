@@ -63,78 +63,7 @@ public class CalendarAdapter {
         return calendars;
     }
 
-    public List<Event> queryEvents(Calendar calendar, Date start, Date end){
-        Uri uri = CalendarContract.Events.CONTENT_URI;
-
-        String[] projection = {
-                CalendarContract.Events._ID,
-                CalendarContract.Events.TITLE,
-                CalendarContract.Events.RRULE,
-                CalendarContract.Events.DTSTART,
-                CalendarContract.Events.DTEND,
-                CalendarContract.Events.EVENT_COLOR};
-
-        String selection = "((" +
-                CalendarContract.Events.CALENDAR_ID + " = ?) AND (" +
-                CalendarContract.Events.DTSTART  + " > ?) AND (" +
-                CalendarContract.Events.DTSTART  + " < ?))";
-
-        String i = String.valueOf(calendar.getId());
-        String s = String.valueOf(start.getTime());
-        String e = String.valueOf(end.getTime());
-        String[] selectionArgs = new String[]{i, s, e};
-
-        Cursor cursor = query(uri, projection, selection, selectionArgs);
-
-        List<Event> events = new ArrayList<>();
-        while (cursor.moveToNext()){
-
-
-            Date date = new Date(cursor.getLong(2));
-
-//            Log.d("Cal", "Event: [" + cursor.getString(1) + "] " + date.getDate() + "." + date.getMonth() + "." + date.getYear() + " -> " + cursor.getString(1));
-
-            long eventID = cursor.getLong(0);
-            String title = cursor.getString(1);
-            boolean reoccuring = (cursor.getString(2) != null);
-            Date startEvent = new Date(cursor.getLong(3));
-            Date endEvent = new Date(cursor.getLong(4));
-            int color = cursor.getInt(5);
-
-            Event event = new Event(eventID, title, reoccuring, startEvent, endEvent, color);
-            events.add(event);
-        }
-        cursor.close();
-        return events;
-    }
-
-    public List<Occurence> queryOccurences(Event event, Date start, Date end){
-        String[] projection = {
-                CalendarContract.Instances._ID,
-                CalendarContract.Instances.BEGIN};
-
-        String selection = CalendarContract.Instances.EVENT_ID + " = ?";
-        String[] selectionArgs = new String[]{String.valueOf(event.getId())};
-
-        Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, start.getTime());
-        ContentUris.appendId(builder, end.getTime());
-
-        Cursor cursor =  query(builder.build(), projection, selection, selectionArgs);
-
-        List<Occurence> occurences = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            Date date = new Date(cursor.getLong(1));
-
-//            Log.d("Cal", "Occurence: " + date);
-            Occurence occurence = new Occurence(0, date);
-            occurences.add(occurence);
-        }
-        cursor.close();
-        return occurences;
-    }
-
-    public List<LightweightEvent> queryOccurences(Calendar calendar, Date start, Date end) {
+    public List<Event> queryOccurences(Calendar calendar, Date start, Date end) {
         String selection = "(" + CalendarContract.Events.CALENDAR_ID + " = ?)";
         String i = String.valueOf(calendar.getId());
         String[] selectionArgs = new String[]{i};
@@ -152,13 +81,13 @@ public class CalendarAdapter {
 
         Cursor cursor = query(builder.build(), projection, selection, selectionArgs);
 
-        List<LightweightEvent> occurences = new ArrayList<>();
+        List<Event> occurences = new ArrayList<>();
         List<Long> ids = new ArrayList<>();
 
         while (cursor.moveToNext()) {
             Date s = new Date(cursor.getLong(1));
             Date e = new Date(cursor.getLong(2));
-            LightweightEvent event = new LightweightEvent(cursor.getLong(0), cursor.getString(4), s, calendar.getId(), calendar.getTitle(), cursor.getInt(3), e);
+            Event event = new Event(cursor.getLong(0), cursor.getString(4), s, calendar.getId(), calendar.getTitle(), cursor.getInt(3), e);
             occurences.add(event);
         }
         cursor.close();

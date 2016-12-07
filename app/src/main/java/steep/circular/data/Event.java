@@ -1,32 +1,47 @@
 package steep.circular.data;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
- * Created by Tom Kretzschmar on 03.11.2016.
+ * Created by Tom Kretzschmar on 04.11.2016.
  *
  */
+
 public class Event {
+
     private long id;
     private String title;
-    private boolean reoccuring;
-    private Date begin;
+    private Date date;
     private Date end;
+    private long cal_id;
+    private String cal_title;
     private int color;
 
-    private List<Occurence> occurences;
+    public Date getEnd() {
+        return end;
+    }
 
-    public Event(long id, String title, boolean reoccuring, Date begin, Date end, int color) {
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
+    public Event(long id, String title, Date date, long cal_id, String cal_title, int color, Date end) {
+        this.color = color;
         this.id = id;
         this.title = title;
-        this.reoccuring = reoccuring;
-        this.begin = begin;
+        this.date = date;
+        this.cal_id = cal_id;
+        this.cal_title = cal_title;
         this.end = end;
-        this.color = color;
 
-        occurences = new ArrayList<>();
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     public long getId() {
@@ -45,47 +60,37 @@ public class Event {
         this.title = title;
     }
 
-    public boolean isReoccuring() {
-        return reoccuring;
+    public Date getDate() {
+        return date;
     }
 
-    public void setReoccuring(boolean reoccuring) {
-        this.reoccuring = reoccuring;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public void setOccurences(List<Occurence> occurences) {
-        this.occurences = occurences;
+    public long getCal_id() {
+        return cal_id;
     }
 
-    public Date getBegin() {
-        return begin;
+    public void setCal_id(long cal_id) {
+        this.cal_id = cal_id;
     }
 
-    public void setBegin(Date begin) {
-        this.begin = begin;
+    public String getCal_title() {
+        return cal_title;
     }
 
-    public Date getEnd() {
-        return end;
+    public void setCal_title(String cal_title) {
+        this.cal_title = cal_title;
     }
 
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public int getColor() {
-        return color;
-    }
-
-    public void setColor(int color) {
+    public Event(long id, String title, Date date, long cal_id, String cal_title, int color) {
         this.color = color;
-    }
-
-    public List<Occurence> getOccurences() {
-        return occurences;
-    }
-
-    public void addOccurence(Occurence occurence){
-        occurences.add(occurence);
+        this.id = id;
+        this.title = title;
+        this.date = date;
+        this.cal_id = cal_id;
+        this.cal_title = cal_title;
+        this.end = null;
     }
 }

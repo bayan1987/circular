@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,30 +18,10 @@ public class CalendarService{
         this.ctx = ctx;
     }
 
-    // TODO: see CalendarAdapter, query of occurences is wrong. only occurences of events added between start and end retrieved
-    public List<Calendar> getAllEvents(Date start, Date end){
-        CalendarAdapter calAdpt = new CalendarAdapter(ctx);
-        List<Calendar> calendars = calAdpt.queryCalendars();
-        if(calendars != null && !calendars.isEmpty()) {
-            for (Calendar cal : calendars) {
-//            if(cal.isShowCalendar()) {
-                cal.setEvents(calAdpt.queryEvents(cal, start, end));
-                for (Event event : cal.getEvents()) {
-                    if (event.isReoccuring()) {
-                        event.setOccurences(calAdpt.queryOccurences(event, start, end));
-                    }
-                }
-//            }
-            }
-        }
-        return calendars;
-    }
-
-    public List<List<LightweightEvent>> getEventPerDayList(MyDate start, MyDate end) {
-
-        List<List<LightweightEvent>> events = new ArrayList<>();
+    public List<List<Event>> getEventPerDayList(MyDate start, MyDate end) {
+        List<List<Event>> events = new ArrayList<>();
         for (int i = 0; i <= 366; i++) {
-            events.add(i, new ArrayList<LightweightEvent>());
+            events.add(i, new ArrayList<Event>());
         }
         CalendarAdapter calAdpt = new CalendarAdapter(ctx);
         List<Calendar> calendars = calAdpt.queryCalendars();
@@ -51,20 +30,20 @@ public class CalendarService{
                 Log.d("Iterated Calendars", "Cal: " + cal.getTitle());
                 cal.setShowCalendar(true); // TODO: Calendar Selection
                 if (cal.isShowCalendar()) {
-                    for (LightweightEvent event : calAdpt.queryOccurences(cal, start.getJavaUtilDate(), end.getJavaUtilDate())) {
+                    for (Event event : calAdpt.queryOccurences(cal, start.getJavaUtilDate(), end.getJavaUtilDate())) {
                         int color = event.getColor() == 0 ? cal.getColor() : event.getColor();
                         MyDate s = new MyDate(event.getDate());
                         MyDate e = new MyDate(event.getEnd());
                         if (s.equals(e)) {
-                            LightweightEvent lightEvent = new LightweightEvent(event.getId(), event.getTitle(), event.getDate(), cal.getId(), cal.getTitle(), color);
+                            Event lightEvent = new Event(event.getId(), event.getTitle(), event.getDate(), cal.getId(), cal.getTitle(), color);
                             MyDate d = new MyDate(lightEvent.getDate());
                             events.get(d.getDayOfYear()).add(lightEvent);
                         } else {
                             int diff = e.getDayOfYear() - s.getDayOfYear();
                             for (int k = 0; k < diff; k++) {
-                                LightweightEvent lightEvent = new LightweightEvent(event.getId(), event.getTitle(), null, cal.getId(), cal.getTitle(), color);
+                                Event lightEvent = new Event(event.getId(), event.getTitle(), null, cal.getId(), cal.getTitle(), color);
 
-                                events.get(s.getDayOfYear() + k).add(lightEvent);
+                                events.get(s.getDayOfYear() + k).add(lightEvent); // TODO: split list in different calendars to provide proper sorting of events
                             }
                         }
                     }

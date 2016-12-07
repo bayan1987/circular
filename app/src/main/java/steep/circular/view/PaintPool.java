@@ -32,6 +32,8 @@ public class PaintPool {
 
     public static final int DATE_PAINT = 12;
 
+    public static final int SELECTION_PAINT_DARK = 13;
+
     private HashMap<Integer, Paint> paintMap;
 
     public PaintPool(Context context) {
@@ -47,6 +49,11 @@ public class PaintPool {
         selectionPaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
         selectionPaint.setAntiAlias(true);
         paintMap.put(SELECTION_PAINT, selectionPaint);
+
+        Paint selectionPaintDark = new Paint();
+        selectionPaintDark.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+        selectionPaintDark.setAntiAlias(true);
+        paintMap.put(SELECTION_PAINT_DARK, selectionPaintDark);
 
         Paint textPaint = new Paint();
         textPaint.setColor(ContextCompat.getColor(context, R.color.colorText));

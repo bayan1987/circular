@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import steep.circular.data.CalendarService;
-import steep.circular.data.LightweightEvent;
+import steep.circular.data.Event;
 import steep.circular.data.MyDate;
 import steep.circular.view.CircleCalendarView;
 
@@ -26,7 +26,7 @@ public class CalendarFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private CircleCalendarView view;
-    private List<List<LightweightEvent>> list;
+    private List<List<Event>> list;
 
     public CalendarFragment() {
 //        Thread calendarQueryThread;
