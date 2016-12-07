@@ -174,8 +174,8 @@ public class CircleCalendarView extends View {
 //            if(diff > 180) diff = 180 - diff;
 //            else if(diff < - 180) diff = 180 + diff;
 //
-//            velocity = (float)(diff * dt * 0.001f); //0.008
-//            currentDrawAngle += velocity ;
+            velocity = (float)(diff * dt * 0.001f); //0.008
+            currentDrawAngle += velocity ;
 //
 //
 //            if(currentDrawAngle < 0) currentDrawAngle = 360 - currentDrawAngle;
