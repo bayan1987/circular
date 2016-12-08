@@ -1,10 +1,10 @@
 package steep.circular.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PathMeasure;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -66,15 +66,13 @@ public class CircleCalendarView extends View {
     private boolean isLeapYear;
     private Weekday firstDayOfYear;
 
-    private static final int DAYS_IN_SELECTION = 7;
-    private static final int SELECTION_ANGLE = 90;
-
-    private static final float TOUCH_SCALE_FAC = 1f;
     private float lastTouchAngle = 0f;
 
     private float pointerAngle = 90f;
     private PaintPool paintPool;
     private Ring eventRing;
+
+    private Bitmap cache;
 
     private DonutSegment seg;
 
@@ -109,9 +107,9 @@ public class CircleCalendarView extends View {
     }
 
     private void init(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setElevation(10.0f);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            setElevation(10.0f);
+//        }
         final float scale = getResources().getDisplayMetrics().density;
         radiusSeasonIn = (int)(RAD_SEASON_IN * scale + 0.5f);
         radiusSeasonOut = (int)(RAD_SEASON_OUT * scale + 0.5f);
@@ -134,8 +132,6 @@ public class CircleCalendarView extends View {
         currentDayOfYear = cal.get(Calendar.DAY_OF_YEAR);
         currentDayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
         isLeapYear = new GregorianCalendar().isLeapYear(currentYear);
-//        if(isLeapYear) countDaysOfMonth.put(Month.February, 29);
-//        else countDaysOfMonth.put(Month.February, 28);
 
         cal.set(currentYear, 1, 1);
         firstDayOfYear = Weekday.valueOf(cal.get(Calendar.DAY_OF_WEEK));
@@ -191,7 +187,7 @@ public class CircleCalendarView extends View {
 
         }
 
-        drawEventPoints(canvas, null, startAngle, anglePerDay, radiusSelectionIn+5, radiusSelectionMid-5);
+        drawEventPoints(canvas, null, startAngle, anglePerDay, radiusSelectionIn+10, radiusSelectionMid-10);
         drawPointer(canvas);
         drawDate(canvas);
     }
@@ -211,11 +207,11 @@ public class CircleCalendarView extends View {
     }
 
     private void drawSeasons(Canvas canvas){
-        float startAngle = 57;
+        float startAngle = ((Month.October.getDayCount() + Month.November.getDayCount()) * anglePerDay) - anglePerDay ;
         int startSeason = PaintPool.WINTER_PAINT;
         for(int i = 0; i<4; i++){
             float sweepAngle = 90;
-            DonutSegment segSeason = new DonutSegment(startAngle, sweepAngle, radiusSeasonIn, radiusSeasonOut, center, true);
+            DonutSegment segSeason = new DonutSegment(startAngle, sweepAngle, radiusSeasonIn, radiusSeasonOut, center, false);
             segSeason.draw(canvas, paintPool.getPaint(startSeason + i));
             startAngle += sweepAngle;
         }
@@ -223,6 +219,9 @@ public class CircleCalendarView extends View {
 
     private void drawMonths(Canvas canvas){
         float startAngle = 90;
+
+        Ring r = new Ring(radiusMonthIn, radiusMonthOut, center);
+        r.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
         for(Month month : Month.values()) {
             float sweepAngle;
             if(month == Month.February){
@@ -231,8 +230,13 @@ public class CircleCalendarView extends View {
             } else {
                 sweepAngle = month.getDayCount() * anglePerDay;
             }
+
+            Point start = GraphicHelpers.pointOnCircle(radiusMonthIn+5, startAngle, center);
+            Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut-5, startAngle, center);
+            canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(SELECTION_PAINT_DARK));
+
             DonutSegment segMonth = new DonutSegment(startAngle, sweepAngle, radiusMonthIn, radiusMonthOut, center, true);
-            segMonth.draw(canvas, paintPool.getPaint(month.getSeason()));
+//            segMonth.draw(canvas, paintPool.getPaint(month.getSeason()));
             startAngle += sweepAngle;
 
             PathMeasure pm = new PathMeasure(segMonth.getTextPath(), false);
@@ -252,27 +256,28 @@ public class CircleCalendarView extends View {
         Point stop = GraphicHelpers.pointOnCircle(radiusSeasonIn -20, angle, center);
 
         Paint paint = new Paint();
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
         paint.setAntiAlias(true);
         paint.setStrokeWidth(4);
         paint.setTextSize(40);
 //        paint.setShadowLayer(10, 0f, 0f, Color.BLACK);
         paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStyle(Paint.Style.STROKE);
 
-
-//        Paint paint2 = new Paint();
-//        paint2.setColor(Color.BLACK);
-//        paint2.setAntiAlias(true);
-//        paint2.setStrokeWidth(5);
+        Paint paint2 = new Paint();
+        paint2.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        paint2.setAntiAlias(true);
+        paint2.setTextSize(40);
 //        paint2.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
-//        paint2.setStrokeCap(Paint.Cap.ROUND);
+        paint2.setStrokeCap(Paint.Cap.ROUND);
 
 //        canvas.drawLine(start.x, start.y, stop.x, stop.y, paint2);
         canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
         float rad = 25;
         Point cCircle = GraphicHelpers.pointOnCircle(radiusSelectionMid + 20 +rad, angle, center);
+        Point cText = GraphicHelpers.pointOnCircle(radiusSelectionMid + 33 + rad, angle, center);
         canvas.drawCircle(cCircle.x, cCircle.y, rad, paint);
-//        canvas.drawText("8", cCircle.x, cCircle.y, paint);
+        canvas.drawText("8", cText.x-15, cText.y, paint2);
 
     }
 
@@ -290,7 +295,8 @@ public class CircleCalendarView extends View {
                     dayPaint.setStrokeCap(Paint.Cap.ROUND);
                     dayPaint.setStrokeWidth(12);
 
-                    dayPaint.setColor(events.get(i).get(j).getColor());
+//                    dayPaint.setColor(events.get(i).get(j).getColor());
+                    dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
 
                     Point p = GraphicHelpers.pointOnCircle(inner + (j * space), startAngle, center);
                     canvas.drawPoint(p.x, p.y, dayPaint);

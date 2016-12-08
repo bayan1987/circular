@@ -50,6 +50,7 @@ public class PaintPool {
         Paint selectionPaintDark = new Paint();
         selectionPaintDark.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
         selectionPaintDark.setAntiAlias(true);
+        selectionPaintDark.setStrokeWidth(3);
         paintMap.put(SELECTION_PAINT_DARK, selectionPaintDark);
 
 
