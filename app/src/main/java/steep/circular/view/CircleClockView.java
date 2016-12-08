@@ -74,7 +74,7 @@ public class CircleClockView extends View {
         paintAccent.setStyle(Paint.Style.STROKE);
         paintAccent.setStrokeWidth(strokeWidth);
         paintAccent.setStrokeCap(Paint.Cap.ROUND);
-        paintAccent.setColor(ContextCompat.getColor(getContext(), R.color.colorPointer));
+        paintAccent.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
 
 //        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
     }

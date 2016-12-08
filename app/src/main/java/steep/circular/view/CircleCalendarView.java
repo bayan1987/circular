@@ -2,9 +2,9 @@ package steep.circular.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PathMeasure;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -109,6 +109,9 @@ public class CircleCalendarView extends View {
     }
 
     private void init(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setElevation(10.0f);
+        }
         final float scale = getResources().getDisplayMetrics().density;
         radiusSeasonIn = (int)(RAD_SEASON_IN * scale + 0.5f);
         radiusSeasonOut = (int)(RAD_SEASON_OUT * scale + 0.5f);
@@ -174,7 +177,7 @@ public class CircleCalendarView extends View {
 //            if(diff > 180) diff = 180 - diff;
 //            else if(diff < - 180) diff = 180 + diff;
 //
-            velocity = (float)(diff * dt * 0.001f); //0.008
+            velocity = (float)(diff * dt * 0.008f); //0.008
             currentDrawAngle += velocity ;
 //
 //
@@ -235,7 +238,7 @@ public class CircleCalendarView extends View {
             PathMeasure pm = new PathMeasure(segMonth.getTextPath(), false);
             float length = pm.getLength();
             String text = (String.valueOf(month.name().substring(0,3)));
-            Paint textPaint = paintPool.getPaint(PaintPool.TEXTW_PAINT);
+            Paint textPaint = paintPool.getPaint(PaintPool.LINE_PAINT);
             float tWidth = textPaint.measureText(text);
             canvas.drawTextOnPath(text, segMonth.getTextPath(), (length-tWidth)/2f, textPaint.getTextSize(), textPaint);
         }
@@ -245,17 +248,32 @@ public class CircleCalendarView extends View {
 
         float angle = currentDayOfYear * anglePerDay + 90;
 
-        Point start = GraphicHelpers.pointOnCircle(radiusSelectionMid + 5, angle, center);
+        Point start = GraphicHelpers.pointOnCircle(radiusSelectionMid + 20, angle, center);
         Point stop = GraphicHelpers.pointOnCircle(radiusSeasonIn -20, angle, center);
 
         Paint paint = new Paint();
         paint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
         paint.setAntiAlias(true);
-        paint.setShadowLayer(25, 2.5f, 0f, Color.BLACK);
         paint.setStrokeWidth(4);
+        paint.setTextSize(40);
+//        paint.setShadowLayer(10, 0f, 0f, Color.BLACK);
         paint.setStrokeCap(Paint.Cap.ROUND);
 
+
+//        Paint paint2 = new Paint();
+//        paint2.setColor(Color.BLACK);
+//        paint2.setAntiAlias(true);
+//        paint2.setStrokeWidth(5);
+//        paint2.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
+//        paint2.setStrokeCap(Paint.Cap.ROUND);
+
+//        canvas.drawLine(start.x, start.y, stop.x, stop.y, paint2);
         canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
+        float rad = 25;
+        Point cCircle = GraphicHelpers.pointOnCircle(radiusSelectionMid + 20 +rad, angle, center);
+        canvas.drawCircle(cCircle.x, cCircle.y, rad, paint);
+//        canvas.drawText("8", cCircle.x, cCircle.y, paint);
+
     }
 
     // TODO draw in bitmap/etc. to get better performance

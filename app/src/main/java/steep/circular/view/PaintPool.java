@@ -19,11 +19,7 @@ public class PaintPool {
     public static final int LINE_PAINT = 0;
 //    public static final int SWEEP_PAINT = 1;
     public static final int SELECTION_PAINT = 2;
-    public static final int TEXT_PAINT = 3;
-    public static final int TEXTW_PAINT = 4;
-    public static final int DAY_PAINT = 5;
-    public static final int WEEKEND_PAINT = 6;
-    public static final int VACATION_PAINT = 7;
+
 
     public static final int WINTER_PAINT = 8;
     public static final int SPRING_PAINT = 9;
@@ -43,6 +39,7 @@ public class PaintPool {
         linePaint.setColor(ContextCompat.getColor(context, R.color.colorBackground));
         linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(5);
+        linePaint.setTextSize(40);
         paintMap.put(LINE_PAINT, linePaint);
 
         Paint selectionPaint = new Paint();
@@ -55,33 +52,6 @@ public class PaintPool {
         selectionPaintDark.setAntiAlias(true);
         paintMap.put(SELECTION_PAINT_DARK, selectionPaintDark);
 
-        Paint textPaint = new Paint();
-        textPaint.setColor(ContextCompat.getColor(context, R.color.colorText));
-        textPaint.setTextSize(40);
-        paintMap.put(TEXT_PAINT, textPaint);
-
-        Paint textPaintWhite = new Paint();
-        textPaintWhite.setColor(ContextCompat.getColor(context, R.color.colorTextW));
-//        textPaintWhite.setTextSize(60);
-        textPaintWhite.setTextSize(40);
-//        textPaintWhite.setTypeface(Typeface.MONOSPACE);
-        paintMap.put(TEXTW_PAINT, textPaintWhite);
-
-        Paint dayPaint = new Paint();
-        dayPaint.setColor(ContextCompat.getColor(context, R.color.colorPointer));
-        dayPaint.setAntiAlias(true);
-        dayPaint.setStrokeWidth(5);
-        paintMap.put(DAY_PAINT, dayPaint);
-
-        Paint weekendPaint = new Paint();
-        weekendPaint.setColor(ContextCompat.getColor(context, R.color.colorWeekend));
-        weekendPaint.setAntiAlias(true);
-        paintMap.put(WEEKEND_PAINT, weekendPaint);
-
-        Paint vacationPaint = new Paint();
-        vacationPaint.setColor(ContextCompat.getColor(context, R.color.colorVacation));
-        vacationPaint.setAntiAlias(true);
-        paintMap.put(VACATION_PAINT, vacationPaint);
 
         Paint springPaint = new Paint();
         springPaint.setColor(ContextCompat.getColor(context, R.color.colorSpring));

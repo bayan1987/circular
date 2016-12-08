@@ -10,14 +10,6 @@
     <color name="colorAccent">#ff1744</color>
     <color name="colorBackground">#37474f</color>
 
-    <color name="colorPointer">#FF2244</color>
-    <color name="colorTextW">#FFFFFF</color>
-    <color name="colorText">#602020</color>
-    <color name="colorSelection">#B2DFDB</color>
-    <color name="colorLine">#00897B</color>
-    <color name="colorWeekend">#42D185</color>
-    <color name="colorVacation">#428AD1</color>
-
     <color name="colorSpring">#8bc34a</color>
     <color name="colorSummer">#FDD835</color>
     <color name="colorAutumn">#ef6c00</color>
