@@ -31,6 +31,7 @@ public class PaintPool {
     public static final int SELECTION_PAINT_DARK = 13;
     public static final int POINTER_LINE_PAINT = 14;
     public static final int POINTER_TEXT_PAINT = 15;
+    public static final Integer DOT_PAINT = 16;
 
     private HashMap<Integer, Paint> paintMap;
 
@@ -101,6 +102,14 @@ public class PaintPool {
 //        pointerTextPaint.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
         pointerTextPaint.setStrokeCap(Paint.Cap.ROUND);
         paintMap.put(POINTER_TEXT_PAINT, pointerTextPaint);
+
+        Paint dotPaint = new Paint();
+        dotPaint.setAntiAlias(true);
+        dotPaint.setStrokeCap(Paint.Cap.ROUND);
+        dotPaint.setStrokeWidth(12);
+//          dotPaint.setColor(events.get(i).get(j).getColor());
+        dotPaint.setColor(ContextCompat.getColor(context, R.color.colorAccent));
+        paintMap.put(DOT_PAINT, dotPaint);
     }
 
     public Paint getPaint(int paintType) {

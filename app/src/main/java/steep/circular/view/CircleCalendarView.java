@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PathMeasure;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,7 +13,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import steep.circular.R;
 import steep.circular.data.Event;
 import steep.circular.data.Month;
 import steep.circular.data.Weekday;
@@ -27,6 +25,7 @@ import steep.circular.view.shapes.TextCircle;
 import static android.R.attr.angle;
 import static steep.circular.util.GraphicHelpers.getAngleOfPoint;
 import static steep.circular.view.PaintPool.DATE_PAINT;
+import static steep.circular.view.PaintPool.DOT_PAINT;
 import static steep.circular.view.PaintPool.POINTER_LINE_PAINT;
 import static steep.circular.view.PaintPool.POINTER_TEXT_PAINT;
 import static steep.circular.view.PaintPool.SELECTION_PAINT;
@@ -141,6 +140,7 @@ public class CircleCalendarView extends View {
             startAngle += sweepAngle;
         }
 
+        eventRing = new Ring(radiusSelectionIn, radiusSelectionMid, center);
         monthRing = new Ring(radiusMonthIn, radiusMonthOut, center);
     }
 
@@ -173,44 +173,36 @@ public class CircleCalendarView extends View {
 
         center = new Point(w / 2, h / 2.5f);
 
-        eventRing = new Ring(radiusSelectionIn, radiusSelectionMid, center);
-
         initDrawingObjects();
 
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {  // TODO: Instanziierung aus draw verschieben
-        float startAngle = 90;
-
+    protected void onDraw(Canvas canvas) {
         drawSeasons(canvas);
         drawMonths(canvas);
         eventRing.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
 
-
         if (touched) {
             double dt = System.currentTimeMillis() - lastTime;
-//            Log.d("dt", "DT:" + dt + "|" + System.currentTimeMillis() + "-" + lastTime);
+
             float diff = lastTouchAngle - currentDrawAngle;
-//            if(diff > 180) diff = 180 - diff;
-//            else if(diff < - 180) diff = 180 + diff;
-//
+
+            if(diff > 180) diff = diff-360;
+            else if(diff < - 180) diff = diff+360;
+
             velocity = (float) (diff * dt * 0.008f); //0.008
             currentDrawAngle += velocity;
-//
-//
-//            if(currentDrawAngle < 0) currentDrawAngle = 360 - currentDrawAngle;
-//            if(currentDrawAngle > 360) currentDrawAngle = currentDrawAngle - 360;
+
             float angle = currentDrawAngle - 45;
 
             touchMarkerSegment.setAngle(angle);
             touchMarkerSegment.draw(canvas, paintPool.getPaint(SELECTION_PAINT_DARK));
             lastTime = System.currentTimeMillis();
-
         }
 
-        drawEventPoints(canvas, null, startAngle, anglePerDay, radiusSelectionIn + 10, radiusSelectionMid - 10);
+        drawEventPoints(canvas, radiusSelectionIn + 10, radiusSelectionMid - 10);
         drawPointer(canvas);
         drawDate(canvas);
     }
@@ -267,7 +259,6 @@ public class CircleCalendarView extends View {
     }
 
     private void drawPointer(Canvas canvas) {
-
         float angle = currentDayOfYear * anglePerDay + 90;
 
         Point start = GraphicHelpers.pointOnCircle(radiusSelectionMid + 20, angle, center);
@@ -278,28 +269,22 @@ public class CircleCalendarView extends View {
 
         TextCircle tc = new TextCircle(angle, radiusSelectionMid + 20 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
         tc.draw(canvas);
-
     }
 
     // TODO draw in bitmap/etc. to get better performance
-    private void drawEventPoints(Canvas canvas, Paint paint, float startAngle, float anglePerDay, float inner, float outer) {
+    private void drawEventPoints(Canvas canvas, float inner, float outer) {
         DonutSegment ds = new DonutSegment(0, 360f, inner, outer, center, false);
         ds.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
         int space = (int) ((outer - inner) / 5);
-        startAngle = 90f;
+        float startAngle = 90f;
         for (int i = 0; i < 365; i++) { // TODO daysinyear
             if (events != null && events.get(i) != null) {
                 for (int j = 0; j < events.get(i).size(); j++) {
-                    Paint dayPaint = new Paint();
-                    dayPaint.setAntiAlias(true);
-                    dayPaint.setStrokeCap(Paint.Cap.ROUND);
-                    dayPaint.setStrokeWidth(12);
-
-//                    dayPaint.setColor(events.get(i).get(j).getColor());
-                    dayPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+                    Paint dotPaint = paintPool.getPaint(DOT_PAINT);
+//                    dotPaint.setColor(events.get(i).get(j).getColor());
 
                     Point p = GraphicHelpers.pointOnCircle(inner + (j * space), startAngle, center);
-                    canvas.drawPoint(p.x, p.y, dayPaint);
+                    canvas.drawPoint(p.x, p.y, dotPaint);
                 }
             }
             startAngle = startAngle + anglePerDay;
@@ -310,11 +295,9 @@ public class CircleCalendarView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         Point touch = new Point(event.getX(), event.getY());
 
-        float a = 2.0f;
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (eventRing.intersects(touch)) {    // TODO: wenn verschoben, intersect falsch
+                if (eventRing.intersects(touch)) {
                     float angle = GraphicHelpers.getAngleOfPoint(touch, center);
                     touched = true;
 
