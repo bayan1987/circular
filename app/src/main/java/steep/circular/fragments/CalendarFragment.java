@@ -1,7 +1,11 @@
 package steep.circular.fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +16,8 @@ import steep.circular.data.CalendarService;
 import steep.circular.data.Event;
 import steep.circular.data.MyDate;
 import steep.circular.view.CircleCalendarView;
+
+import static steep.circular.TabbedMainActivity.READ_CALENDAR_REQUEST;
 
 /**
  * Created by Tom on 10.11.2016.
@@ -43,6 +49,11 @@ public class CalendarFragment extends Fragment {
 //        };
 //        calendarQueryThread = new Thread(calQueryRunnable);
 //        calendarQueryThread.start();
+
+
+
+
+
     }
 
     /**
@@ -63,7 +74,25 @@ public class CalendarFragment extends Fragment {
 //        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 //        textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 //        return rootView;
-        CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
+
+
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(getContext().getApplicationContext(),
+                Manifest.permission.READ_CALENDAR)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.READ_CALENDAR},
+                    READ_CALENDAR_REQUEST);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+
+            CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
         list = calSrv.getEventPerDayList(new MyDate(1,12,2016), new MyDate(30,11,2017));
         view = new CircleCalendarView(this.getActivity().getApplicationContext());
         view.setEvents(list);
