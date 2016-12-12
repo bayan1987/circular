@@ -24,6 +24,10 @@ public class ClockWidgetProvider extends AppWidgetProvider {
 
     public static final String ACTION_CLOCK_UPDATE = "CLOCK_UPDATE";
 
+    private AppWidgetAlarm alarm;
+
+    private int countWidgets = 0;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
@@ -35,25 +39,19 @@ public class ClockWidgetProvider extends AppWidgetProvider {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.clock_widget);
             ComponentName componentName = new ComponentName(context, ClockWidgetProvider.class);
 
-
-
-
             CircleClockView circleClockView = new CircleClockView(context);
-            int minute = Calendar.getInstance().get(Calendar.HOUR);
-            int second = Calendar.getInstance().get(Calendar.MINUTE);
-            int millisecond = Calendar.getInstance().get(Calendar.SECOND);
-            circleClockView.updateWidgetClock(minute, second, millisecond);
-            circleClockView.measure(1000, 1000);
-            circleClockView.layout(0, 0, 1000, 1000);
-            Bitmap bitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
+//            CircleClockView.STROKE_WIDTH_DP = 5;
+            int hour = Calendar.getInstance().get(Calendar.HOUR);
+            int minute = Calendar.getInstance().get(Calendar.MINUTE);
+            circleClockView.updateWidgetClock(hour, minute);
+            circleClockView.measure(900, 900);
+            circleClockView.layout(0, 0, 900, 900);
+            Bitmap bitmap = Bitmap.createBitmap(900, 900, Bitmap.Config.ARGB_8888);
             circleClockView.draw(new Canvas(bitmap));
 
             views.setImageViewBitmap(R.id.imageView, bitmap);
 
             AppWidgetManager.getInstance(context).updateAppWidget(componentName, views);
-
-//            Log.d("ClockWidgetProvider", "onUpdate()");
-
         }
     }
 
@@ -61,9 +59,10 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     public void onEnabled(Context context) {
         super.onEnabled(context);
 
-        AppWidgetAlarm appWidgetAlarm = new AppWidgetAlarm(context.getApplicationContext());
-        appWidgetAlarm.startAlarm();
-        Log.d("ClockWidgetProvider", "onEnabled()");
+        countWidgets ++;
+
+        alarm = new AppWidgetAlarm(context.getApplicationContext());
+        alarm.startAlarm();
     }
 
     @Override
@@ -72,9 +71,12 @@ public class ClockWidgetProvider extends AppWidgetProvider {
 
         // TODO: alarm should be stopped only if all widgets has been disabled
 
+        countWidgets --;
+
         // stop alarm
-        AppWidgetAlarm appWidgetAlarm = new AppWidgetAlarm(context.getApplicationContext());
-        appWidgetAlarm.stopAlarm();
+        if(alarm != null && countWidgets == 0) {
+            alarm.stopAlarm();
+        }
     }
 
     @Override
@@ -83,13 +85,13 @@ public class ClockWidgetProvider extends AppWidgetProvider {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.clock_widget);
 
             CircleClockView circleClockView = new CircleClockView(context);
-            int minute = Calendar.getInstance().get(Calendar.HOUR);
-            int second = Calendar.getInstance().get(Calendar.MINUTE);
-            int millisecond = Calendar.getInstance().get(Calendar.SECOND);
-            circleClockView.updateWidgetClock(minute, second, millisecond);
-            circleClockView.measure(1000, 1000);
-            circleClockView.layout(0, 0, 1000, 1000);
-            Bitmap bitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
+//            CircleClockView.STROKE_WIDTH_DP = 5;
+            int hour = Calendar.getInstance().get(Calendar.HOUR);
+            int minute = Calendar.getInstance().get(Calendar.MINUTE);
+            circleClockView.updateWidgetClock(hour, minute);
+            circleClockView.measure(900, 900);
+            circleClockView.layout(0, 0, 900, 900);
+            Bitmap bitmap = Bitmap.createBitmap(900, 900, Bitmap.Config.ARGB_8888);
             circleClockView.draw(new Canvas(bitmap));
 
             views.setImageViewBitmap(R.id.imageView, bitmap);

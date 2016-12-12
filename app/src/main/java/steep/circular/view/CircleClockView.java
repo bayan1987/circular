@@ -22,7 +22,7 @@ public class CircleClockView extends View {
     private static final int RAD_OUT_DP = 105;
     private static final int RAD_SCALE_DP = 30;
 
-    private static final int STROKE_WIDTH_DP = 3;
+    public static int STROKE_WIDTH_DP = 3;
 
     private int clockRadiusInner;
     private int clockRadiusOuter;
@@ -35,7 +35,7 @@ public class CircleClockView extends View {
     private Point center;
 
     private float minute;
-    private float second;
+    private float second = -1;
     private float hour;
 
     private boolean filling = true;
@@ -121,7 +121,7 @@ public class CircleClockView extends View {
             isSet = false;
         }
 
-        if ((filling && (number < second)) || (!filling && (number > second))) {
+        if (second != -1 && (filling && (number < second)) || (!filling && (number > second))) {
             drawLine(canvas, clockRadiusInner - lengthIn, lengthOut + clockRadiusOuter, angleStart, number);//1
         } else {
             drawLine(canvas, clockRadiusInner - lengthIn, clockRadiusMiddleIn, angleStart, number);//2
@@ -146,9 +146,9 @@ public class CircleClockView extends View {
 
     }
 
-    public void updateWidgetClock(int hour, int minute, int second) {
-        this.second = hour + (minute / 60f);
-        this.minute = minute + (this.second / 60f);
+    public void updateWidgetClock(int hour, int minute) {
+        this.minute = minute;
+        this.hour = hour + (this.minute / 60f);
         invalidate();
     }
 }
