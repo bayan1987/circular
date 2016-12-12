@@ -24,8 +24,11 @@ import steep.circular.view.shapes.DonutSegment;
 import steep.circular.view.shapes.Ring;
 import steep.circular.view.shapes.TextCircle;
 
+import static android.R.attr.angle;
 import static steep.circular.util.GraphicHelpers.getAngleOfPoint;
 import static steep.circular.view.PaintPool.DATE_PAINT;
+import static steep.circular.view.PaintPool.POINTER_LINE_PAINT;
+import static steep.circular.view.PaintPool.POINTER_TEXT_PAINT;
 import static steep.circular.view.PaintPool.SELECTION_PAINT;
 import static steep.circular.view.PaintPool.SELECTION_PAINT_DARK;
 
@@ -75,7 +78,9 @@ public class CircleCalendarView extends View {
 
     private Bitmap cache;
 
-    private DonutSegment seg;
+    private DonutSegment touchMarkerSegment;
+    private DonutSegment[] seasonSegments;
+    private Ring monthRing;
 
     boolean touched = false;
     float currentDrawAngle = 0.0f;
@@ -101,30 +106,45 @@ public class CircleCalendarView extends View {
         init();
     }
 
-    private Weekday calcWeekdayFromDayOfYear(int dayOfYear, Weekday firstDayOfYear){
+    private Weekday calcWeekdayFromDayOfYear(int dayOfYear, Weekday firstDayOfYear) {
         int day = dayOfYear % 7;
         day = day + firstDayOfYear.getValue();
         return Weekday.valueOf(day);
     }
 
-    private void init(){
+    private void init() {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            setElevation(10.0f);
 //        }
         final float scale = getResources().getDisplayMetrics().density;
-        radiusSeasonIn = (int)(RAD_SEASON_IN * scale + 0.5f);
-        radiusSeasonOut = (int)(RAD_SEASON_OUT * scale + 0.5f);
-        radiusMonthIn = (int)(RAD_MONTH_IN * scale + 0.5f);
-        radiusMonthOut = (int)(RAD_MONTH_OUT * scale + 0.5f);
-        radiusSelectionIn = (int)(RAD_SELECTION_IN * scale + 0.5f);
-        radiusSelectionMid = (int)(RAD_SELECTION_MID * scale + 0.5f);
-        radiusSelectionOut = (int)(RAD_SELECTION_OUT * scale + 0.5f);
+        radiusSeasonIn = (int) (RAD_SEASON_IN * scale + 0.5f);
+        radiusSeasonOut = (int) (RAD_SEASON_OUT * scale + 0.5f);
+        radiusMonthIn = (int) (RAD_MONTH_IN * scale + 0.5f);
+        radiusMonthOut = (int) (RAD_MONTH_OUT * scale + 0.5f);
+        radiusSelectionIn = (int) (RAD_SELECTION_IN * scale + 0.5f);
+        radiusSelectionMid = (int) (RAD_SELECTION_MID * scale + 0.5f);
+        radiusSelectionOut = (int) (RAD_SELECTION_OUT * scale + 0.5f);
 
         paintPool = new PaintPool(this.getContext().getApplicationContext());
-        update(null);
+
+        update(null); // must be called before initDrawingObjects
     }
 
-    public void update(List<List<Event>> events){
+    private void initDrawingObjects() {
+        touchMarkerSegment = new DonutSegment(angle, 90, radiusSelectionIn, radiusSelectionMid, center, false);
+
+        float startAngle = ((Month.October.getDayCount() + Month.November.getDayCount()) * anglePerDay) - anglePerDay;
+        seasonSegments = new DonutSegment[4];
+        for (int i = 0; i < 4; i++) {
+            float sweepAngle = 90;
+            seasonSegments[i] = new DonutSegment(startAngle, sweepAngle, radiusSeasonIn, radiusSeasonOut, center, false);
+            startAngle += sweepAngle;
+        }
+
+        monthRing = new Ring(radiusMonthIn, radiusMonthOut, center);
+    }
+
+    public void update(List<List<Event>> events) {
         this.events = events;
 
         Calendar cal = Calendar.getInstance();
@@ -151,9 +171,11 @@ public class CircleCalendarView extends View {
         width = w - xPad;
         height = h - yPad;
 
-        center = new Point(w/2, h/2.5f);
+        center = new Point(w / 2, h / 2.5f);
 
         eventRing = new Ring(radiusSelectionIn, radiusSelectionMid, center);
+
+        initDrawingObjects();
 
         super.onSizeChanged(w, h, oldw, oldh);
     }
@@ -167,117 +189,94 @@ public class CircleCalendarView extends View {
         eventRing.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
 
 
-        if(touched){
+        if (touched) {
             double dt = System.currentTimeMillis() - lastTime;
 //            Log.d("dt", "DT:" + dt + "|" + System.currentTimeMillis() + "-" + lastTime);
             float diff = lastTouchAngle - currentDrawAngle;
 //            if(diff > 180) diff = 180 - diff;
 //            else if(diff < - 180) diff = 180 + diff;
 //
-            velocity = (float)(diff * dt * 0.008f); //0.008
-            currentDrawAngle += velocity ;
+            velocity = (float) (diff * dt * 0.008f); //0.008
+            currentDrawAngle += velocity;
 //
 //
 //            if(currentDrawAngle < 0) currentDrawAngle = 360 - currentDrawAngle;
 //            if(currentDrawAngle > 360) currentDrawAngle = currentDrawAngle - 360;
             float angle = currentDrawAngle - 45;
 
-            seg = new DonutSegment(angle, 90, radiusSelectionIn, radiusSelectionMid, center, false);
-            seg.draw(canvas, paintPool.getPaint(SELECTION_PAINT_DARK));
+            touchMarkerSegment.setAngle(angle);
+            touchMarkerSegment.draw(canvas, paintPool.getPaint(SELECTION_PAINT_DARK));
             lastTime = System.currentTimeMillis();
 
         }
 
-        drawEventPoints(canvas, null, startAngle, anglePerDay, radiusSelectionIn+10, radiusSelectionMid-10);
+        drawEventPoints(canvas, null, startAngle, anglePerDay, radiusSelectionIn + 10, radiusSelectionMid - 10);
         drawPointer(canvas);
         drawDate(canvas);
     }
 
-    private void drawDate(Canvas canvas){
+    private void drawDate(Canvas canvas) {
         Paint textPaint = paintPool.getPaint(DATE_PAINT);
         String text1 = "" + currentDayOfMonth;
-        String text2 = "" + (currentMonth+1);
+        String text2 = "" + (currentMonth + 1);
         String text3 = "" + currentYear;
 
-        float xStart1 = center.x - (textPaint.measureText(text1)/2);
-        float xStart2 = center.x - (textPaint.measureText(text2)/2);
-        float xStart3 = center.x - (textPaint.measureText(text3)/2);
-        canvas.drawText(text1, xStart1, center.y-textPaint.getTextSize(), textPaint);
+        float xStart1 = center.x - (textPaint.measureText(text1) / 2);
+        float xStart2 = center.x - (textPaint.measureText(text2) / 2);
+        float xStart3 = center.x - (textPaint.measureText(text3) / 2);
+        canvas.drawText(text1, xStart1, center.y - textPaint.getTextSize(), textPaint);
         canvas.drawText(text2, xStart2, center.y, textPaint);
-        canvas.drawText(text3, xStart3, center.y+textPaint.getTextSize(), textPaint);
+        canvas.drawText(text3, xStart3, center.y + textPaint.getTextSize(), textPaint);
     }
 
-    private void drawSeasons(Canvas canvas){
-        float startAngle = ((Month.October.getDayCount() + Month.November.getDayCount()) * anglePerDay) - anglePerDay ;
+    private void drawSeasons(Canvas canvas) {
         int startSeason = PaintPool.WINTER_PAINT;
-        for(int i = 0; i<4; i++){
-            float sweepAngle = 90;
-            DonutSegment segSeason = new DonutSegment(startAngle, sweepAngle, radiusSeasonIn, radiusSeasonOut, center, false);
-            segSeason.draw(canvas, paintPool.getPaint(startSeason + i));
-            startAngle += sweepAngle;
+        for (int i = 0; i < 4; i++) {
+            seasonSegments[i].draw(canvas, paintPool.getPaint(startSeason + i));
         }
     }
 
-    private void drawMonths(Canvas canvas){
+    private void drawMonths(Canvas canvas) {
         float startAngle = 90;
 
-        Ring r = new Ring(radiusMonthIn, radiusMonthOut, center);
-        r.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
-        for(Month month : Month.values()) {
+        monthRing.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
+        for (Month month : Month.values()) {
             float sweepAngle;
-            if(month == Month.February){
+            if (month == Month.February) {
                 int dayCount = isLeapYear ? month.getDayCount() : month.getDayCount() + 1;
                 sweepAngle = dayCount * anglePerDay;
             } else {
                 sweepAngle = month.getDayCount() * anglePerDay;
             }
 
-            Point start = GraphicHelpers.pointOnCircle(radiusMonthIn+5, startAngle, center);
-            Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut-5, startAngle, center);
+            Point start = GraphicHelpers.pointOnCircle(radiusMonthIn + 5, startAngle, center);
+            Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut - 5, startAngle, center);
             canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(SELECTION_PAINT_DARK));
 
             DonutSegment segMonth = new DonutSegment(startAngle, sweepAngle, radiusMonthIn, radiusMonthOut, center, false);
-//            segMonth.draw(canvas, paintPool.getPaint(month.getSeason()));
-
 
             PathMeasure pm = new PathMeasure(segMonth.getTextPath(), false);
             float length = pm.getLength();
-            String text = (String.valueOf(month.name().substring(0,3)));
+            String text = (String.valueOf(month.name().substring(0, 3)));
             Paint textPaint = paintPool.getPaint(PaintPool.LINE_PAINT);
             float tWidth = textPaint.measureText(text);
-            canvas.drawTextOnPath(text, segMonth.getTextPath(), (length-tWidth)/2f, textPaint.getTextSize(), textPaint);
+            canvas.drawTextOnPath(text, segMonth.getTextPath(), (length - tWidth) / 2f, textPaint.getTextSize(), textPaint);
 
             startAngle += sweepAngle;
         }
     }
 
-    private void drawPointer(Canvas canvas){
+    private void drawPointer(Canvas canvas) {
 
         float angle = currentDayOfYear * anglePerDay + 90;
 
         Point start = GraphicHelpers.pointOnCircle(radiusSelectionMid + 20, angle, center);
-        Point stop = GraphicHelpers.pointOnCircle(radiusSeasonIn -20, angle, center);
+        Point stop = GraphicHelpers.pointOnCircle(radiusSeasonIn - 20, angle, center);
 
-        Paint paint = new Paint();
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-        paint.setAntiAlias(true);
-        paint.setStrokeWidth(4);
-        paint.setTextSize(40);
-//        paint.setShadowLayer(10, 0f, 0f, Color.BLACK);
-        paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setStyle(Paint.Style.STROKE);
-
-        Paint paint2 = new Paint();
-        paint2.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-        paint2.setAntiAlias(true);
-        paint2.setTextSize(40);
-//        paint2.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
-        paint2.setStrokeCap(Paint.Cap.ROUND);
-
-        canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
+        canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(POINTER_LINE_PAINT));
         float rad = 30;
 
-        TextCircle tc = new TextCircle(angle, radiusSelectionMid + 20 + rad, String.valueOf(currentDayOfMonth), center, rad, paint, paint2);
+        TextCircle tc = new TextCircle(angle, radiusSelectionMid + 20 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
         tc.draw(canvas);
 
     }
@@ -313,10 +312,10 @@ public class CircleCalendarView extends View {
 
         float a = 2.0f;
 
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(eventRing.intersects(touch)){    // TODO: wenn verschoben, intersect falsch
-                    float angle =  GraphicHelpers.getAngleOfPoint(touch, center);
+                if (eventRing.intersects(touch)) {    // TODO: wenn verschoben, intersect falsch
+                    float angle = GraphicHelpers.getAngleOfPoint(touch, center);
                     touched = true;
 
                     lastTouchAngle = angle;

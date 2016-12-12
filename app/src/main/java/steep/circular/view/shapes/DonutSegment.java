@@ -79,4 +79,9 @@ public class DonutSegment extends Shape {
             return false;
         }
     }
+
+    public void setAngle(float angle){
+        outerStartAngle = angle;
+        innerStartAngle = angle;
+    }
 }

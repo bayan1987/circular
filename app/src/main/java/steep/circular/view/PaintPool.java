@@ -17,7 +17,7 @@ import steep.circular.R;
 public class PaintPool {
 
     public static final int LINE_PAINT = 0;
-//    public static final int SWEEP_PAINT = 1;
+    //    public static final int SWEEP_PAINT = 1;
     public static final int SELECTION_PAINT = 2;
 
 
@@ -29,6 +29,8 @@ public class PaintPool {
     public static final int DATE_PAINT = 12;
 
     public static final int SELECTION_PAINT_DARK = 13;
+    public static final int POINTER_LINE_PAINT = 14;
+    public static final int POINTER_TEXT_PAINT = 15;
 
     private HashMap<Integer, Paint> paintMap;
 
@@ -81,9 +83,27 @@ public class PaintPool {
         datePaint.setStrokeWidth(3);
         datePaint.setStrokeCap(Paint.Cap.ROUND);
         paintMap.put(DATE_PAINT, datePaint);
+
+        Paint pointerLinePaint = new Paint();
+        pointerLinePaint.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+        pointerLinePaint.setAntiAlias(true);
+        pointerLinePaint.setStrokeWidth(4);
+        pointerLinePaint.setTextSize(40);
+//        pointerLinePaint.setShadowLayer(10, 0f, 0f, Color.BLACK);
+        pointerLinePaint.setStrokeCap(Paint.Cap.ROUND);
+        pointerLinePaint.setStyle(Paint.Style.STROKE);
+        paintMap.put(POINTER_LINE_PAINT, pointerLinePaint);
+
+        Paint pointerTextPaint = new Paint();
+        pointerTextPaint.setColor(ContextCompat.getColor(context, R.color.colorAccent));
+        pointerTextPaint.setAntiAlias(true);
+        pointerTextPaint.setTextSize(40);
+//        pointerTextPaint.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
+        pointerTextPaint.setStrokeCap(Paint.Cap.ROUND);
+        paintMap.put(POINTER_TEXT_PAINT, pointerTextPaint);
     }
 
-    public Paint getPaint(int paintType){
+    public Paint getPaint(int paintType) {
         return paintMap.get(paintType);
     }
 }
