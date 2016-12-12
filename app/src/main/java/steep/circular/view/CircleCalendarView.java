@@ -22,6 +22,7 @@ import steep.circular.util.GraphicHelpers;
 import steep.circular.util.Point;
 import steep.circular.view.shapes.DonutSegment;
 import steep.circular.view.shapes.Ring;
+import steep.circular.view.shapes.TextCircle;
 
 import static steep.circular.util.GraphicHelpers.getAngleOfPoint;
 import static steep.circular.view.PaintPool.DATE_PAINT;
@@ -235,9 +236,9 @@ public class CircleCalendarView extends View {
             Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut-5, startAngle, center);
             canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(SELECTION_PAINT_DARK));
 
-            DonutSegment segMonth = new DonutSegment(startAngle, sweepAngle, radiusMonthIn, radiusMonthOut, center, true);
+            DonutSegment segMonth = new DonutSegment(startAngle, sweepAngle, radiusMonthIn, radiusMonthOut, center, false);
 //            segMonth.draw(canvas, paintPool.getPaint(month.getSeason()));
-            startAngle += sweepAngle;
+
 
             PathMeasure pm = new PathMeasure(segMonth.getTextPath(), false);
             float length = pm.getLength();
@@ -245,6 +246,8 @@ public class CircleCalendarView extends View {
             Paint textPaint = paintPool.getPaint(PaintPool.LINE_PAINT);
             float tWidth = textPaint.measureText(text);
             canvas.drawTextOnPath(text, segMonth.getTextPath(), (length-tWidth)/2f, textPaint.getTextSize(), textPaint);
+
+            startAngle += sweepAngle;
         }
     }
 
@@ -271,13 +274,11 @@ public class CircleCalendarView extends View {
 //        paint2.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
         paint2.setStrokeCap(Paint.Cap.ROUND);
 
-//        canvas.drawLine(start.x, start.y, stop.x, stop.y, paint2);
         canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
-        float rad = 25;
-        Point cCircle = GraphicHelpers.pointOnCircle(radiusSelectionMid + 20 +rad, angle, center);
-        Point cText = GraphicHelpers.pointOnCircle(radiusSelectionMid + 33 + rad, angle, center);
-        canvas.drawCircle(cCircle.x, cCircle.y, rad, paint);
-        canvas.drawText("8", cText.x-15, cText.y, paint2);
+        float rad = 30;
+
+        TextCircle tc = new TextCircle(angle, radiusSelectionMid + 20 + rad, String.valueOf(currentDayOfMonth), center, rad, paint, paint2);
+        tc.draw(canvas);
 
     }
 
