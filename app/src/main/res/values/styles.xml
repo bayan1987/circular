@@ -12,6 +12,7 @@
         <item name="android:textColorPrimary">@color/colorBackground</item>
         <item name="android:textColorPrimaryInverse">@color/colorBackground</item>
         <item name="android:textColorSecondaryInverse">@color/colorBackground</item>
+        <item name="android:actionMenuTextColor">@color/colorPrimary</item>
     </style>
 
 
