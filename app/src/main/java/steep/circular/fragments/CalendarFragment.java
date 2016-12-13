@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import steep.circular.data.CalendarService;
 import steep.circular.data.Event;
 import steep.circular.data.MyDate;
+import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
 
 import static steep.circular.TabbedMainActivity.READ_CALENDAR_REQUEST;
@@ -49,10 +49,6 @@ public class CalendarFragment extends Fragment {
 //        };
 //        calendarQueryThread = new Thread(calQueryRunnable);
 //        calendarQueryThread.start();
-
-
-
-
 
     }
 
@@ -92,8 +88,12 @@ public class CalendarFragment extends Fragment {
             // result of the request.
         }
 
-            CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
-        list = calSrv.getEventPerDayList(new MyDate(1,12,2016), new MyDate(30,11,2017));
+        MyDate start = MyDate.getToday();
+        MyDate end = MyDate.getToday();
+        end.setYear(end.getYear()+1);
+
+        CalendarService calSrv = new CalendarService(getContext().getApplicationContext());
+        list = calSrv.getEventPerDayList(start, end);
         view = new CircleCalendarView(this.getActivity().getApplicationContext());
         view.setEvents(list);
         return view;

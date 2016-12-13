@@ -14,6 +14,11 @@ public class MyDate {
     private int month;
     private int year;
 
+
+    public static MyDate getToday(){
+        return new MyDate(System.currentTimeMillis());
+    }
+
     public MyDate(int day, int month, int year) {
         this.day = day;
         this.month = month;
