@@ -9,13 +9,15 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="android:textColorPrimary">@color/colorBackground</item>
+        <item name="android:textColorPrimary">@color/colorAccent</item>
         <item name="android:textColorPrimaryInverse">@color/colorBackground</item>
         <item name="android:textColorSecondaryInverse">@color/colorBackground</item>
         <item name="android:actionMenuTextColor">@color/colorPrimary</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>

@@ -17,7 +17,7 @@ import steep.circular.data.MyDate;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
 
-import static steep.circular.TabbedMainActivity.READ_CALENDAR_REQUEST;
+import static steep.circular.activities.TabbedMainActivity.READ_CALENDAR_REQUEST;
 
 /**
  * Created by Tom on 10.11.2016.

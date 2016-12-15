@@ -1,5 +1,6 @@
-package steep.circular;
+package steep.circular.activities;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,9 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.Toast;
 
+import steep.circular.R;
 import steep.circular.fragments.CalendarFragment;
 import steep.circular.fragments.ClockFragment;
 
@@ -43,7 +44,7 @@ public class TabbedMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_tabbed_main);
 
@@ -87,6 +88,12 @@ public class TabbedMainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Toast.makeText(this, "SETTINGS", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(this, SettingsActivity.class);
+//            String message = editText.getText().toString();
+//            intent.putExtra(EXTRA_MESSAGE, message);
+            startActivity(intent);
+
             return true;
         }
 
