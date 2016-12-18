@@ -92,6 +92,13 @@ public class MyDate {
         this.month = month;
     }
 
+    @Override
+    public String toString() {
+        return  day +
+                "." + month +
+                "." + year;
+    }
+
     public int getYear() {
         return year;
     }

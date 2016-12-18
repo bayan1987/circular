@@ -38,20 +38,18 @@ import static steep.circular.view.PaintPool.SELECTION_PAINT_DARK;
 
 public class CircleCalendarView extends View {
 
-    private static final int RAD_SEASON_IN = 80;
-    private static final int RAD_SEASON_OUT = 90;
-    private static final int RAD_MONTH_IN = 95;
-    private static final int RAD_MONTH_OUT = 125;
-    private static final int RAD_SELECTION_IN = 135;
-    private static final int RAD_SELECTION_MID = 170;
-    private static final int RAD_SELECTION_OUT = 200;
+    private static final int RAD_SEASON_IN = 70;
+    private static final int RAD_SEASON_OUT = 80;
+    private static final int RAD_MONTH_IN = 85;
+    private static final int RAD_MONTH_OUT = 110;
+    private static final int RAD_SELECTION_IN = 120;
+    private static final int RAD_SELECTION_OUT = 150;
 
     private int radiusSeasonIn;
     private int radiusSeasonOut;
     private int radiusMonthIn;
     private int radiusMonthOut;
     private int radiusSelectionIn;
-    private int radiusSelectionMid;
     private int radiusSelectionOut;
 
     private Point center;
@@ -121,7 +119,7 @@ public class CircleCalendarView extends View {
         radiusMonthIn = (int) (RAD_MONTH_IN * scale + 0.5f);
         radiusMonthOut = (int) (RAD_MONTH_OUT * scale + 0.5f);
         radiusSelectionIn = (int) (RAD_SELECTION_IN * scale + 0.5f);
-        radiusSelectionMid = (int) (RAD_SELECTION_MID * scale + 0.5f);
+        radiusSelectionOut = (int) (RAD_SELECTION_OUT * scale + 0.5f);
         radiusSelectionOut = (int) (RAD_SELECTION_OUT * scale + 0.5f);
 
         paintPool = new PaintPool(this.getContext().getApplicationContext());
@@ -130,7 +128,7 @@ public class CircleCalendarView extends View {
     }
 
     private void initDrawingObjects() {
-        touchMarkerSegment = new DonutSegment(angle, 90, radiusSelectionIn, radiusSelectionMid, center, false);
+        touchMarkerSegment = new DonutSegment(angle, 90, radiusSelectionIn, radiusSelectionOut, center, false);
 
         float startAngle = ((Month.October.getDayCount() + Month.November.getDayCount()) * anglePerDay) - anglePerDay;
         seasonSegments = new DonutSegment[4];
@@ -140,7 +138,7 @@ public class CircleCalendarView extends View {
             startAngle += sweepAngle;
         }
 
-        eventRing = new Ring(radiusSelectionIn, radiusSelectionMid, center);
+        eventRing = new Ring(radiusSelectionIn, radiusSelectionOut, center);
         monthRing = new Ring(radiusMonthIn, radiusMonthOut, center);
     }
 
@@ -202,7 +200,7 @@ public class CircleCalendarView extends View {
             lastTime = System.currentTimeMillis();
         }
 
-        drawEventPoints(canvas, radiusSelectionIn + 10, radiusSelectionMid - 10);
+        drawEventPoints(canvas, radiusSelectionIn + 10, radiusSelectionOut - 10);
         drawPointer(canvas);
         drawDate(canvas);
     }
@@ -261,13 +259,13 @@ public class CircleCalendarView extends View {
     private void drawPointer(Canvas canvas) {
         float angle = currentDayOfYear * anglePerDay + 90;
 
-        Point start = GraphicHelpers.pointOnCircle(radiusSelectionMid + 20, angle, center);
+        Point start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 20, angle, center);
         Point stop = GraphicHelpers.pointOnCircle(radiusSeasonIn - 20, angle, center);
 
         canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(POINTER_LINE_PAINT));
         float rad = 30;
 
-        TextCircle tc = new TextCircle(angle, radiusSelectionMid + 20 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
+        TextCircle tc = new TextCircle(angle, radiusSelectionOut + 20 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
         tc.draw(canvas);
     }
 
