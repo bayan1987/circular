@@ -23,6 +23,12 @@ public class CalendarService{
         this.ctx = ctx;
     }
 
+
+    public List<Calendar> getAvailableCalendars(){
+        CalendarAdapter calAdpt = new CalendarAdapter(ctx);
+        return calAdpt.queryCalendars();
+    }
+
     public List<List<Event>> getEventPerDayList(MyDate start, MyDate end) {
         List<List<Event>> events = new ArrayList<>();
         for (int i = 0; i <= 366; i++) {

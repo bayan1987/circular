@@ -1,6 +1,7 @@
 package steep.circular.activities;
 
 import android.Manifest;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import java.util.List;
 import steep.circular.R;
 import steep.circular.data.Event;
 import steep.circular.data.MyDate;
+import steep.circular.dialog.CalendarDialog;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
 
@@ -74,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         List<List<Event>> list = calSrv.getEventPerDayList(start, end);
         CircleCalendarView view = (CircleCalendarView) findViewById(R.id.calendar);
         view.setEvents(list);
-
 
 
 
@@ -152,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
         }
         if(id == R.id.bottomSheetSetting){
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+        if(id == R.id.filter_setting) {
+            Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show();
+
+            DialogFragment dialog = new CalendarDialog();
+            dialog.show(getFragmentManager(), "calendarSelection");
         }
 
         return super.onOptionsItemSelected(item);

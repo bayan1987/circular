@@ -2,6 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="steep.circular.activities.MainActivity">
+
+    <item
+        android:id="@+id/filter_setting"
+        android:icon="@drawable/ic_filter_list_black_48dp"
+        android:title="Filter"
+        app:showAsAction="always"
+
+        />
+
     <item
         android:id="@+id/action_settings"
 
