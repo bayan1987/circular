@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import steep.circular.data.Calendar;
 import steep.circular.data.CalendarAdapter;
@@ -39,7 +40,14 @@ public class CalendarService{
         if (calendars != null && !calendars.isEmpty()) {
             for (Calendar cal : calendars) {
                 Log.d("Iterated Calendars", "Cal: " + cal.getTitle());
-                cal.setShowCalendar(true); // TODO: Calendar Selection
+
+                PreferenceService preferenceService = new PreferenceService(ctx);
+                Set<String> cals = preferenceService.getCalendars();
+                if(cals.contains(cal.getTitle())){
+                    cal.setShowCalendar(true);
+                } else {
+                    cal.setShowCalendar(false);
+                }
                 if (cal.isShowCalendar()) {
                     for (Event event : calAdpt.queryOccurences(cal, start.getJavaUtilDate(), end.getJavaUtilDate())) {
                         int color = event.getColor() == 0 ? cal.getColor() : event.getColor();

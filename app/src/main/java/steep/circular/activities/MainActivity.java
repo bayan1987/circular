@@ -27,10 +27,11 @@ import steep.circular.R;
 import steep.circular.data.Event;
 import steep.circular.data.MyDate;
 import steep.circular.dialog.CalendarDialog;
+import steep.circular.dialog.DialogReturn;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DialogReturn{
 
     public static final int READ_CALENDAR_REQUEST = 1;
 
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     ArrayList<String> listItems=new ArrayList<String>();
 
+
+    CircleCalendarView view;
+    CalendarService calSrv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
         MyDate end = MyDate.getToday();
         end.setYear(end.getYear() + 1);
 
-        CalendarService calSrv = new CalendarService(getApplicationContext());
+        calSrv = new CalendarService(getApplicationContext());
         List<List<Event>> list = calSrv.getEventPerDayList(start, end);
-        CircleCalendarView view = (CircleCalendarView) findViewById(R.id.calendar);
+        view = (CircleCalendarView) findViewById(R.id.calendar);
         view.setEvents(list);
 
 
@@ -156,9 +160,12 @@ public class MainActivity extends AppCompatActivity {
         }
         if(id == R.id.filter_setting) {
             Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show();
+            Log.d("Filter", "Settings");
 
             DialogFragment dialog = new CalendarDialog();
             dialog.show(getFragmentManager(), "calendarSelection");
+
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -208,4 +215,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void notifyOk() {
+        MyDate start = MyDate.getToday();
+        MyDate end = MyDate.getToday();
+        end.setYear(end.getYear() + 1);
+
+
+        List<List<Event>> list = calSrv.getEventPerDayList(start, end);
+
+        view.setEvents(list);
+        view.invalidate();
+    }
+
+    @Override
+    public void notifyCancel() {
+
+    }
 }
