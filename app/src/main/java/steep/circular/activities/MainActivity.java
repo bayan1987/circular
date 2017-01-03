@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         View bottomSheet = findViewById(R.id.bottom_sheet1);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 //        bottomSheetBehavior.setHideable(true);
-        bottomSheetBehavior.setPeekHeight(200);
+        bottomSheetBehavior.setPeekHeight(180);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
