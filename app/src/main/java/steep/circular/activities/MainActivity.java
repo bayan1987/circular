@@ -27,17 +27,17 @@ import steep.circular.R;
 import steep.circular.data.Event;
 import steep.circular.data.MyDate;
 import steep.circular.dialog.CalendarDialog;
-import steep.circular.dialog.DialogReturn;
+import steep.circular.dialog.DialogListener;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
 
-public class MainActivity extends AppCompatActivity implements DialogReturn{
+public class MainActivity extends AppCompatActivity implements DialogListener {
 
     public static final int READ_CALENDAR_REQUEST = 1;
 
     private BottomSheetBehavior bottomSheetBehavior;
     ArrayAdapter<String> adapter;
-    ArrayList<String> listItems=new ArrayList<String>();
+    ArrayList<String> listItems = new ArrayList<>();
 
 
     CircleCalendarView view;
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements DialogReturn{
         ListView listView = (ListView) findViewById(R.id.event_list);
 
 
-        adapter=new ArrayAdapter<String>(this,
+        adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
                 listItems);
         listView.setAdapter(adapter);
@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements DialogReturn{
                     Log.d("Permission", "Permission denied");
 
                 }
-                return;
             }
 
             // other 'case' lines to check for other
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements DialogReturn{
     }
 
     @Override
-    public void notifyOk() {
+    public void onPositiveDialogReturn() {
         MyDate start = MyDate.getToday();
         MyDate end = MyDate.getToday();
         end.setYear(end.getYear() + 1);
@@ -229,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements DialogReturn{
     }
 
     @Override
-    public void notifyCancel() {
+    public void onNegativeDialogReturn() {
 
     }
 }

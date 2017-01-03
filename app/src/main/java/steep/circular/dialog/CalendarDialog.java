@@ -25,21 +25,21 @@ import steep.circular.service.PreferenceService;
 public class CalendarDialog extends DialogFragment {
 
     ArrayList<Integer> mSelectedItems;
-    DialogReturn listener;
+    DialogListener listener;
 
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        listener = (DialogReturn) activity;
+        listener = (DialogListener) activity;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 
-        mSelectedItems = new ArrayList();  // Where we track the selected items
+        mSelectedItems = new ArrayList<>();  // Where we track the selected items
         final PreferenceService preferenceService = new PreferenceService(this.getActivity().getApplicationContext());
         final Set<String> prefCalendars = preferenceService.getCalendars();
 
@@ -97,13 +97,13 @@ public class CalendarDialog extends DialogFragment {
                         }
 
                         preferenceService.putCalendars(c);
-                        listener.notifyOk();
+                        listener.onPositiveDialogReturn();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.notifyCancel();
+                        listener.onNegativeDialogReturn();
                     }
                 });
 
