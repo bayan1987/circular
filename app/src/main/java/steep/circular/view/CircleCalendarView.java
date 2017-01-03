@@ -169,7 +169,7 @@ public class CircleCalendarView extends View {
         width = w - xPad;
         height = h - yPad;
 
-        center = new Point(w / 2, h / 2.5f);
+        center = new Point(w / 2, h / 2);
 
         initDrawingObjects();
 
