@@ -1,7 +1,6 @@
 package steep.circular.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -23,10 +22,8 @@ import steep.circular.data.Weekday;
 import steep.circular.util.GraphicHelpers;
 import steep.circular.util.Point;
 import steep.circular.view.shapes.DonutSegment;
-import steep.circular.view.shapes.Ring;
 import steep.circular.view.shapes.TextCircle;
 
-import static steep.circular.util.GraphicHelpers.getAngleOfPoint;
 import static steep.circular.view.PaintPool.DATE_PAINT;
 import static steep.circular.view.PaintPool.DOT_PAINT;
 import static steep.circular.view.PaintPool.POINTER_LINE_PAINT;
@@ -73,23 +70,18 @@ public class CircleCalendarView extends View {
 
     private float pointerAngle = 90f;
     private PaintPool paintPool;
-    private Ring eventRing;
-
-    private Bitmap cache;
 
     private DonutSegment touchMarkerSegment;
     private DonutSegment[] seasonSegments;
-    private Ring monthRing;
 
     boolean touched = false;
     float currentDrawAngle = 0.0f;
-    float velocity;
 
     double lastTime;
 
     private List<List<Event>> events;
 
-    Drawable bg;
+    Drawable calendar_circle;
     Drawable pointer;
 
 
@@ -129,7 +121,7 @@ public class CircleCalendarView extends View {
 
         paintPool = new PaintPool(this.getContext().getApplicationContext());
 
-        bg = ContextCompat.getDrawable(getContext(), R.drawable.ic_calendar_circle);
+        calendar_circle = ContextCompat.getDrawable(getContext(), R.drawable.ic_calendar_circle);
         pointer = ContextCompat.getDrawable(getContext(), R.drawable.ic_pointer);
 
 
@@ -148,8 +140,6 @@ public class CircleCalendarView extends View {
             startAngle += sweepAngle;
         }
 
-        eventRing = new Ring(radiusSelectionIn, radiusSelectionOut, center);
-        monthRing = new Ring(radiusMonthIn, radiusMonthOut, center);
     }
 
     public void update(List<List<Event>> events) {
@@ -188,10 +178,7 @@ public class CircleCalendarView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        drawSeasons(canvas);
         drawMonths(canvas);
-
-//        eventRing.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
 
 //        if (touched) {
 //            double dt = System.currentTimeMillis() - lastTime;
@@ -230,20 +217,12 @@ public class CircleCalendarView extends View {
         canvas.drawText(text3, xStart3, center.y + textPaint.getTextSize(), textPaint);
     }
 
-//    private void drawSeasons(Canvas canvas) {
-//        int startSeason = PaintPool.WINTER_PAINT;
-//        for (int i = 0; i < 4; i++) {
-//            seasonSegments[i].draw(canvas, paintPool.getPaint(startSeason + i));
-//        }
-//    }
-
     private void drawMonths(Canvas canvas) {
         float startAngle = 90;
 
-        bg.setBounds((int) center.x-radiusSelectionOut, (int) center.y-radiusSelectionOut, (int) center.x+radiusSelectionOut,  (int) center.y+radiusSelectionOut);
-        bg.draw(canvas);
+        calendar_circle.setBounds((int) center.x-radiusSelectionOut, (int) center.y-radiusSelectionOut, (int) center.x+radiusSelectionOut,  (int) center.y+radiusSelectionOut);
+        calendar_circle.draw(canvas);
 
-//        monthRing.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
         for (Month month : Month.values()) {
             float sweepAngle;
             if (month == Month.February) {
@@ -252,10 +231,6 @@ public class CircleCalendarView extends View {
             } else {
                 sweepAngle = month.getDayCount() * anglePerDay;
             }
-
-//            Point start = GraphicHelpers.pointOnCircle(radiusMonthIn + 5, startAngle, center);
-//            Point stop = GraphicHelpers.pointOnCircle(radiusMonthOut - 5, startAngle, center);
-//            canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(SELECTION_PAINT_DARK));
 
             DonutSegment segMonth = new DonutSegment(startAngle, sweepAngle, radiusMonthIn, radiusMonthOut, center, false);
 
@@ -277,9 +252,6 @@ public class CircleCalendarView extends View {
         float angle = currentDayOfYear * anglePerDay + 90;
 
         Point start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 10, angle, center);
-//        Point stop = GraphicHelpers.pointOnCircle(radiusSeasonIn - 20, angle, center);
-
-//        canvas.drawLine(start.x, start.y, stop.x, stop.y, paintPool.getPaint(POINTER_LINE_PAINT));
         float rad = 30;
 
         TextCircle tc = new TextCircle(angle, radiusSelectionOut + 0 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
@@ -319,42 +291,43 @@ public class CircleCalendarView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         Point touch = new Point(event.getX(), event.getY());
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (eventRing.intersects(touch)) {
-                    float angle = GraphicHelpers.getAngleOfPoint(touch, center);
-                    touched = true;
-
-                    lastTouchAngle = angle;
-                    currentDrawAngle = angle;
-
-                    lastTime = System.currentTimeMillis();
-
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                    return true;
-                } else {
-                    return false;
-                }
-            case MotionEvent.ACTION_MOVE:
-                lastTouchAngle = getAngleOfPoint(touch, center);
-
-                invalidate();
-                return true;
-            case MotionEvent.ACTION_UP:
-                pointerAngle = 90f;
-                touched = false;
-                invalidate();
-
-                return true;
-            case MotionEvent.ACTION_CANCEL:
-                getParent().requestDisallowInterceptTouchEvent(false);
-                pointerAngle = 90f;
-                touched = false;
-                invalidate();
-                return true;
-            default:
-                return false;
-        }
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                if (eventRing.intersects(touch)) {
+//                    float angle = GraphicHelpers.getAngleOfPoint(touch, center);
+//                    touched = true;
+//
+//                    lastTouchAngle = angle;
+//                    currentDrawAngle = angle;
+//
+//                    lastTime = System.currentTimeMillis();
+//
+//                    getParent().requestDisallowInterceptTouchEvent(true);
+//                    return true;
+//                } else {
+//                    return false;
+//                }
+//            case MotionEvent.ACTION_MOVE:
+//                lastTouchAngle = getAngleOfPoint(touch, center);
+//
+//                invalidate();
+//                return true;
+//            case MotionEvent.ACTION_UP:
+//                pointerAngle = 90f;
+//                touched = false;
+//                invalidate();
+//
+//                return true;
+//            case MotionEvent.ACTION_CANCEL:
+//                getParent().requestDisallowInterceptTouchEvent(false);
+//                pointerAngle = 90f;
+//                touched = false;
+//                invalidate();
+//                return true;
+//            default:
+//                return false;
+//        }
+        return false;
     }
 
     public void setEvents(List<List<Event>> list) {
