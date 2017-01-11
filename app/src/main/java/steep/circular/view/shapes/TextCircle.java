@@ -1,6 +1,7 @@
 package steep.circular.view.shapes;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -36,6 +37,7 @@ public class TextCircle {
 
         Rect bounds = new Rect();
         paintT.getTextBounds(text, 0, text.length(), bounds);
+        paintT.setColor(Color.WHITE);
 
         centerText = new Point(-(bounds.width()/1.8f), (bounds.height()/2f));
         centerCircle = GraphicHelpers.pointOnCircle(radius, angle, center);
@@ -44,7 +46,7 @@ public class TextCircle {
     public void draw(Canvas canvas) {
         canvas.save(Canvas.MATRIX_SAVE_FLAG);
         canvas.translate(centerCircle.x, centerCircle.y);
-        canvas.drawCircle(0, 0, circleRadius, paintC);
+//        canvas.drawCircle(0, 0, circleRadius, paintC);
         canvas.drawText(text, centerText.x, centerText.y, paintT);
         canvas.restore();
     }

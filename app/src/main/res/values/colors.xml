@@ -5,10 +5,15 @@
     <color name="colorAccent">#FF4081</color>
     -->
 
-    <color name="colorPrimary">#b9f6ca</color>
+    <!--<color name="colorPrimary">#b9f6ca</color>
     <color name="colorPrimaryDark">#00c853</color>
     <color name="colorAccent">#ff1744</color>
-    <color name="colorBackground">#37474f</color>
+    <color name="colorBackground">#37474f</color>-->
+
+    <color name="colorPrimary">#88979d</color>
+    <color name="colorPrimaryDark">#00c853</color>
+    <color name="colorAccent">#ff1744</color>
+    <color name="colorBackground">#000000</color>
 
     <color name="colorSpring">#8bc34a</color>
     <color name="colorSummer">#FDD835</color>

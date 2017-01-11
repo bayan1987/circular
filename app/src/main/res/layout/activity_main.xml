@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="steep.circular.activities.MainActivity">
+    tools:context="steep.circular.activities.MainActivity"
+    android:background="@drawable/background_gradient">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -29,32 +30,62 @@
 
     <steep.circular.view.CircleCalendarView android:id="@+id/calendar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="468dp"
 
-        />
+        android:elevation="0dp" />
 
 
     <LinearLayout
         android:id="@+id/bottom_sheet1"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
         android:clipToPadding="true"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_height="450dp">
 
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
 
             <TextView
-                android:id="@+id/bottom_sheet_titleview"
-                android:layout_width="match_parent"
+                android:text="11.01.2017"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/shorttext_bottomsheet"
-                android:textSize="16sp"
-                android:textAllCaps="true"
-                android:padding="16dp"/>
+                android:id="@+id/textView"
+                android:layout_marginTop="11dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:textAppearance="@style/TextAppearance.AppCompat" />
+        </RelativeLayout>
 
-            <ListView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:padding="10dp"
+            android:layout_height="100dp">
+
+            <Button
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/button2"
+                android:layout_weight="1"
+                android:background="@drawable/bottomsheet_circle"
+                android:elevation="0dp" />
+
+            <Button
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/button4"
+                android:background="@drawable/bottomsheet_circle"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/button2"
+                android:layout_toEndOf="@+id/button2"
+                android:layout_marginLeft="11dp"
+                android:layout_marginStart="11dp" />
+        </RelativeLayout>
+
+        <ListView
                 android:id="@+id/event_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

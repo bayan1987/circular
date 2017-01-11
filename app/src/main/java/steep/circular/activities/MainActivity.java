@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -12,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,7 +88,11 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         View bottomSheet = findViewById(R.id.bottom_sheet1);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 //        bottomSheetBehavior.setHideable(true);
-        bottomSheetBehavior.setPeekHeight(180);
+
+        Resources r = getResources();
+        int px =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, r.getDisplayMetrics());
+
+        bottomSheetBehavior.setPeekHeight(px);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
