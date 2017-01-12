@@ -106,7 +106,7 @@ public class PaintPool {
         Paint dotPaint = new Paint();
         dotPaint.setAntiAlias(true);
         dotPaint.setStrokeCap(Paint.Cap.ROUND);
-        dotPaint.setStrokeWidth(12);
+        dotPaint.setStrokeWidth(12); // TODO : dp
 //          dotPaint.setColor(events.get(i).get(j).getColor());
         dotPaint.setColor(ContextCompat.getColor(context, R.color.colorAccent));
         paintMap.put(DOT_PAINT, dotPaint);

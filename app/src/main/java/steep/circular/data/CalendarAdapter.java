@@ -26,6 +26,7 @@ public class CalendarAdapter {
     private Context context;
     // TODO: account name & type from user / no input
     private static final String ACCOUNT_NAME = "tkretzschmar94@googlemail.com";
+//    private static final String ACCOUNT_NAME = "m.zwinzscher@googlemail.com";
     private static final String ACCOUNT_TYPE = "com.google";
 
     public CalendarAdapter(Context context) {

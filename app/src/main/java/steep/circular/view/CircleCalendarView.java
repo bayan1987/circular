@@ -279,6 +279,7 @@ public class CircleCalendarView extends View {
     }
 
     // TODO draw in bitmap/etc. to get better performance
+    // TODO points in dp
     private void drawEventPoints(Canvas canvas, float inner, float outer) {
         DonutSegment ds = new DonutSegment(0, 360f, inner, outer, center, false);
         ds.draw(canvas, paintPool.getPaint(SELECTION_PAINT));
