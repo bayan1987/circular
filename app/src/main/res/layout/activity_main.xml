@@ -14,12 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:background="#48ffffff">
 
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorPrimary"
+            android:background="#00ffffff"
             android:theme="?attr/actionBarTheme"
             android:minHeight="?attr/actionBarSize"
 
@@ -39,7 +40,7 @@
         android:id="@+id/bottom_sheet1"
         android:layout_width="match_parent"
         android:clipToPadding="true"
-        android:background="@color/colorPrimary"
+        android:background="#48ffffff"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
         android:orientation="vertical"
         android:layout_height="450dp">
@@ -63,26 +64,26 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:padding="10dp"
-            android:layout_height="100dp">
+            android:layout_height="80dp">
 
             <Button
-                android:layout_width="80dp"
-                android:layout_height="80dp"
                 android:id="@+id/button2"
                 android:layout_weight="1"
                 android:background="@drawable/bottomsheet_circle"
-                android:elevation="0dp" />
+                android:elevation="0dp"
+                android:layout_height="60dp"
+                android:layout_width="60dp" />
 
             <Button
-                android:layout_width="80dp"
-                android:layout_height="80dp"
                 android:id="@+id/button4"
                 android:background="@drawable/bottomsheet_circle"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/button2"
                 android:layout_toEndOf="@+id/button2"
                 android:layout_marginLeft="11dp"
-                android:layout_marginStart="11dp" />
+                android:layout_marginStart="11dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp" />
         </RelativeLayout>
 
         <ListView

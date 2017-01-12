@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
 //        bottomSheetBehavior.setHideable(true);
 
         Resources r = getResources();
-        int px =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, r.getDisplayMetrics());
+        int px =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, r.getDisplayMetrics());
 
         bottomSheetBehavior.setPeekHeight(px);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -98,11 +98,14 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState){
+//                    case BottomSheetBehavior.STATE_EXPANDED: bottomSheet.setBackgroundColor();
+                }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
+                // TODO: change background transparency when sliding up and down
             }
         });
 

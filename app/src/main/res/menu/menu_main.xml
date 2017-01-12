@@ -4,8 +4,16 @@
     tools:context="steep.circular.activities.MainActivity">
 
     <item
+        android:id="@+id/today"
+        android:icon="@drawable/ic_today_white_48dp"
+        android:title="Today"
+        app:showAsAction="always"
+
+        />
+
+    <item
         android:id="@+id/filter_setting"
-        android:icon="@drawable/ic_filter_list_black_48dp"
+        android:icon="@drawable/ic_filter_list_white_48dp"
         android:title="Filter"
         app:showAsAction="always"
 

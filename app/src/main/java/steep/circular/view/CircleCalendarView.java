@@ -83,6 +83,7 @@ public class CircleCalendarView extends View {
 
     Drawable calendar_circle;
     Drawable pointer;
+    Drawable pointer_small;
 
 
     public CircleCalendarView(Context context) {
@@ -123,6 +124,7 @@ public class CircleCalendarView extends View {
 
         calendar_circle = ContextCompat.getDrawable(getContext(), R.drawable.ic_calendar_circle);
         pointer = ContextCompat.getDrawable(getContext(), R.drawable.ic_pointer);
+        pointer_small = ContextCompat.getDrawable(getContext(), R.drawable.ic_pointer_small);
 
 
         update(null); // must be called before initDrawingObjects
@@ -251,20 +253,29 @@ public class CircleCalendarView extends View {
     private void drawPointer(Canvas canvas) {
         float angle = currentDayOfYear * anglePerDay + 90;
 
-        Point start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 10, angle, center);
+        Point start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 40, angle, center);
         float rad = 30;
 
-        TextCircle tc = new TextCircle(angle, radiusSelectionOut + 0 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
+        TextCircle tc = new TextCircle(angle, radiusSelectionOut + 30 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
 
 
 
         canvas.save(Canvas.MATRIX_SAVE_FLAG);
-        canvas.rotate(180+angle, pointer.getBounds().centerX(), pointer.getBounds().centerY());
+        canvas.rotate(angle, pointer.getBounds().centerX(), pointer.getBounds().centerY());
         pointer.setBounds((int)start.x-70, (int)start.y-70, (int)start.x+70, (int)start.y+70);
         pointer.draw(canvas);
         canvas.restore();
 
-//        tc.draw(canvas);
+        tc.draw(canvas);
+
+        angle = angle - anglePerDay * 14;
+        start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 3, angle, center);
+        canvas.save(Canvas.MATRIX_SAVE_FLAG);
+        canvas.rotate(angle, pointer_small.getBounds().centerX(), pointer_small.getBounds().centerY());
+        pointer_small.setBounds((int)start.x-30, (int)start.y-30, (int)start.x+30, (int)start.y+30);
+        pointer_small.draw(canvas);
+        canvas.restore();
+
     }
 
     // TODO draw in bitmap/etc. to get better performance
