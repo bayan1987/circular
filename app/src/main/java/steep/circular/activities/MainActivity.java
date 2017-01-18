@@ -11,11 +11,14 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -32,6 +35,7 @@ import steep.circular.dialog.CalendarDialog;
 import steep.circular.dialog.DialogListener;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
+import steep.circular.view.EventAdapter;
 
 public class MainActivity extends AppCompatActivity implements DialogListener {
 
@@ -83,7 +87,17 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         view = (CircleCalendarView) findViewById(R.id.calendar);
         view.setEvents(list);
 
+        List<Event> evList = list.get(start.getDayOfYear()+1); // TODO, Listendatum falsch
 
+
+        Log.d("recycler", "evlist:" + evList.size());
+        EventAdapter adapter2 = new EventAdapter(this, evList);
+
+        LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.event_day_list);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        mRecyclerView.setAdapter(adapter2);
 
         View bottomSheet = findViewById(R.id.bottom_sheet1);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -98,14 +112,24 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                switch (newState){
-//                    case BottomSheetBehavior.STATE_EXPANDED: bottomSheet.setBackgroundColor();
-                }
+//                switch (newState){
+//                    case BottomSheetBehavior.STATE_EXPANDED: bottomSheet.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorbgOpaque));
+//                        break;
+//                    case BottomSheetBehavior.STATE_COLLAPSED: bottomSheet.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorbgTransparent));
+//                        break;
+//                }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 // TODO: change background transparency when sliding up and down
+//                bottomSheet.setAlpha(1-(0.72f*(1-slideOffset)));
+//                bottomSheet.getBackground().setAlpha((int) (255-(183*(1-slideOffset))));
+//                int color = ContextCompat.getColor(getApplicationContext(), R.color.colorbgOpaque);
+////                bottomSheet.setBackgroundColor();
+////                Log.d("anim", "alpha:" + bottomSheet.getAlpha() + " |offset:" + slideOffset);
+//                Log.d("anim", "color:" + color);
+
             }
         });
 
@@ -118,6 +142,13 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         listView.setAdapter(adapter);
         listView.getParent().requestDisallowInterceptTouchEvent(true);
 
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
 
 
         for (int i = 0; i < 365; i++) { // TODO daysinyear
@@ -234,6 +265,8 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
 
         view.setEvents(list);
         view.invalidate();
+
+        // TODO: bottom View list und current day list aktualisieren
     }
 
     @Override

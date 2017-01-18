@@ -21,5 +21,8 @@
     <color name="colorWinter">#3f51b5</color>
     <color name="colorTextPrimary">#ffffff</color>
 
+    <color name="colorbgTransparent">#48ffffff</color>
+    <color name="colorbgOpaque">#809199</color>
+
 
 </resources>

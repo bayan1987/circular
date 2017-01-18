@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
         android:weightSum="1"
-        android:background="#48ffffff">
+        android:background="@color/colorbgTransparent">
 
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
@@ -40,10 +40,10 @@
         android:id="@+id/bottom_sheet1"
         android:layout_width="match_parent"
         android:clipToPadding="true"
-        android:background="#48ffffff"
+        android:background="@color/colorbgOpaque"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-        android:orientation="vertical"
-        android:layout_height="450dp">
+        android:layout_height="450dp"
+        android:orientation="vertical">
 
 
         <RelativeLayout
@@ -59,32 +59,38 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:textAppearance="@style/TextAppearance.AppCompat" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_arrow"
+                android:id="@+id/button_left"
+                android:background="#00ffffff"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/textView"
+                android:layout_toStartOf="@+id/textView"
+                android:layout_marginRight="13dp"
+                android:layout_marginEnd="13dp" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_arrow"
+                android:id="@+id/button_right"
+                android:background="#00ffffff"
+                android:rotation="180"
+                android:layout_alignTop="@+id/button_left"
+                android:layout_toRightOf="@+id/textView"
+                android:layout_toEndOf="@+id/textView"
+                android:layout_marginLeft="13dp"
+                android:layout_marginStart="13dp" />
+
         </RelativeLayout>
 
-        <RelativeLayout
+        <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:padding="10dp"
-            android:layout_height="80dp">
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_weight="1"
-                android:background="@drawable/bottomsheet_circle"
-                android:elevation="0dp"
-                android:layout_height="60dp"
-                android:layout_width="60dp" />
-
-            <Button
-                android:id="@+id/button4"
-                android:background="@drawable/bottomsheet_circle"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/button2"
-                android:layout_toEndOf="@+id/button2"
-                android:layout_marginLeft="11dp"
-                android:layout_marginStart="11dp"
-                android:layout_width="60dp"
-                android:layout_height="60dp" />
-        </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:id="@+id/event_day_list" />
 
         <ListView
                 android:id="@+id/event_list"

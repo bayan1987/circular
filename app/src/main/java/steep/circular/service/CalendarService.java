@@ -48,7 +48,9 @@ public class CalendarService{
                 } else {
                     cal.setShowCalendar(false);
                 }
+
                 if (cal.isShowCalendar()) {
+                    Log.d("dates", "start:" + start.toString() + " end:" + end.toString());
                     for (Event event : calAdpt.queryOccurences(cal, start.getJavaUtilDate(), end.getJavaUtilDate())) {
                         int color = event.getColor() == 0 ? cal.getColor() : event.getColor();
                         MyDate s = new MyDate(event.getDate());
@@ -66,6 +68,7 @@ public class CalendarService{
                             }
                         }
                     }
+                    Log.d("dates", "eventcount=" + events.size());
                 }
             }
         }

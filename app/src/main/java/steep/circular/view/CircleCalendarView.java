@@ -303,6 +303,10 @@ public class CircleCalendarView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         Point touch = new Point(event.getX(), event.getY());
 
+        if(pointer.getBounds().contains((int)touch.x, (int)touch.y)){
+
+        }
+
 //        switch (event.getAction()) {
 //            case MotionEvent.ACTION_DOWN:
 //                if (eventRing.intersects(touch)) {
