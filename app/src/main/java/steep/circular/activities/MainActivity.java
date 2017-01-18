@@ -30,12 +30,12 @@ import java.util.List;
 
 import steep.circular.R;
 import steep.circular.data.Event;
+import steep.circular.data.EventAdapter;
 import steep.circular.data.MyDate;
 import steep.circular.dialog.CalendarDialog;
 import steep.circular.dialog.DialogListener;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
-import steep.circular.view.EventAdapter;
 
 public class MainActivity extends AppCompatActivity implements DialogListener {
 
@@ -206,6 +206,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
             dialog.show(getFragmentManager(), "calendarSelection");
 
 
+        }
+        if(id == R.id.today){
+            view.resetPointer();
+            view.invalidate();
         }
 
         return super.onOptionsItemSelected(item);
