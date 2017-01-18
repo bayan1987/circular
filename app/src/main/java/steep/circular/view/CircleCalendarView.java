@@ -256,8 +256,8 @@ public class CircleCalendarView extends View {
 
     private void drawPointer(Canvas canvas) {
 
-        if(currentDayAngle == currentDrawAngle){
-            float angle = currentDayOfYear * anglePerDay + 90;
+        if(currentDayAngle - currentDrawAngle <= 0.5f){
+            float angle = currentDrawAngle;
 
             Point start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 40, angle, center);
             float rad = 30;
@@ -271,8 +271,11 @@ public class CircleCalendarView extends View {
             pointer.setBounds((int)start.x-70, (int)start.y-70, (int)start.x+70, (int)start.y+70);
             pointer.draw(canvas);
             canvas.restore();
+
+            tc.draw(canvas);
+
         } else {
-            float angle = currentDayOfYear * anglePerDay + 90;
+            float angle = currentDrawAngle;
 
             Point start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 40, currentDrawAngle, center);
             float rad = 30;
@@ -288,6 +291,7 @@ public class CircleCalendarView extends View {
 
             tc.draw(canvas);
 
+            angle = currentDayAngle;
             start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 40, angle, center);
 
 
@@ -370,6 +374,6 @@ public class CircleCalendarView extends View {
     }
 
     public void resetPointer(){
-        currentDrawAngle = currentDayOfYear * anglePerDay + 90;
+        currentDrawAngle = currentDayAngle;
     }
 }
