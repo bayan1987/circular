@@ -93,7 +93,7 @@ public class CircleCalendarView extends View {
     Drawable calendar_circle;
     Drawable pointer;
     Drawable pointer_small;
-
+    private boolean eventColors = true;
 
 
     public CircleCalendarView(Context context) {
@@ -312,7 +312,7 @@ public class CircleCalendarView extends View {
 
 
 
-            TextCircle tc = new TextCircle(angle, radiusSelectionOut + 30 + rad, String.valueOf(getMonthDayFromAngle(angle)), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));// TODO: set Pointer only on real day angles and calculate correct day to be shown
+            TextCircle tc = new TextCircle(angle, radiusSelectionOut + 30 + rad, String.valueOf(getMonthDayFromAngle(angle)), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));// TODO: set Pointer only on real day angles and calculate correct day to be shown; start all Angles at 1. January because otherwise dates are wrong calculated
 
 
             canvas.save(Canvas.MATRIX_SAVE_FLAG);
@@ -353,7 +353,8 @@ public class CircleCalendarView extends View {
             if (events != null && events.get(i) != null) {
                 for (int j = 0; j < events.get(i).size(); j++) {
                     Paint dotPaint = paintPool.getPaint(DOT_PAINT);
-//                    dotPaint.setColor(events.get(i).get(j).getColor());
+                    if(eventColors)
+                        dotPaint.setColor(events.get(i).get(j).getColor()); // Set color to CalendarColor
 
                     Point p = GraphicHelpers.pointOnCircle(inner + (j * space), startAngle, center);
                     canvas.drawPoint(p.x, p.y, dotPaint);
@@ -416,5 +417,16 @@ public class CircleCalendarView extends View {
     public void resetPointer() {
         currentDrawAngle = currentDayAngle;
         Log.d("TOUCH", "currentDdayAngle=" + currentDayAngle);
+    }
+
+
+    public void toLeft() {
+        currentDrawAngle-=anglePerDay;
+        invalidate();
+    }
+
+    public void toRight() {
+        currentDrawAngle+=anglePerDay;
+        invalidate();
     }
 }

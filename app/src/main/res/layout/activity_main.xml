@@ -54,36 +54,38 @@
                 android:text="11.01.2017"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView"
+                android:id="@+id/currentDayView"
                 android:layout_marginTop="11dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:textAppearance="@style/TextAppearance.AppCompat" />
 
             <ImageButton
+                android:id="@+id/button_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_arrow"
-                android:id="@+id/button_left"
-                android:background="#00ffffff"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/textView"
-                android:layout_toStartOf="@+id/textView"
+                android:layout_marginEnd="13dp"
                 android:layout_marginRight="13dp"
-                android:layout_marginEnd="13dp" />
+                android:layout_toLeftOf="@+id/currentDayView"
+                android:layout_toStartOf="@+id/currentDayView"
+                android:background="#00ffffff"
+                android:onClick="onLeftClick"
+                app:srcCompat="@drawable/ic_arrow"/>
 
             <ImageButton
+                android:id="@+id/button_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_arrow"
-                android:id="@+id/button_right"
-                android:background="#00ffffff"
-                android:rotation="180"
                 android:layout_alignTop="@+id/button_left"
-                android:layout_toRightOf="@+id/textView"
-                android:layout_toEndOf="@+id/textView"
                 android:layout_marginLeft="13dp"
-                android:layout_marginStart="13dp" />
+                android:layout_marginStart="13dp"
+                android:layout_toEndOf="@+id/currentDayView"
+                android:layout_toRightOf="@+id/currentDayView"
+                android:background="#00ffffff"
+                android:onClick="onRightClick"
+                android:rotation="180"
+                app:srcCompat="@drawable/ic_arrow"/>
 
         </RelativeLayout>
 

@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.event_day_list);
         mRecyclerView.setLayoutManager(layoutManager);
-
+// TODO: RecyclerView is not shown.. maybe disable it
         mRecyclerView.setAdapter(adapter2);
 
         View bottomSheet = findViewById(R.id.bottom_sheet1);
@@ -151,7 +152,21 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         });
 
 
-        for (int i = 0; i < 365; i++) { // TODO daysinyear
+        for (int i = start.getDayOfYear(); i < 365; i++) { // TODO daysinyear
+            if (list != null && list.get(i) != null) {
+                for (int j = 0; j < list.get(i).size(); j++) {
+                    Event event = list.get(i).get(j);
+                    if(event.getDate() != null) {
+                        MyDate date = new MyDate(event.getDate());
+                        adapter.add(date + " | " + event.getTitle());
+                    } else {
+                        adapter.add("null" + " | " + event.getTitle());
+
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < start.getDayOfYear(); i++) { // TODO daysinyear
             if (list != null && list.get(i) != null) {
                 for (int j = 0; j < list.get(i).size(); j++) {
                     Event event = list.get(i).get(j);
@@ -169,6 +184,12 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TextView textView = (TextView) findViewById(R.id.currentDayView);
+        textView.setText(MyDate.getToday().toString());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -276,5 +297,13 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     @Override
     public void onNegativeDialogReturn() {
 
+    }
+
+    public void onLeftClick(View v) {
+        view.toLeft();
+    }
+
+    public void onRightClick(View v) {
+        view.toRight();
     }
 }
