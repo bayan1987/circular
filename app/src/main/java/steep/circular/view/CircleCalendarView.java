@@ -1,13 +1,17 @@
 package steep.circular.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PathMeasure;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -18,12 +22,14 @@ import java.util.List;
 import steep.circular.R;
 import steep.circular.data.Event;
 import steep.circular.data.Month;
+import steep.circular.data.MyDate;
 import steep.circular.data.Weekday;
 import steep.circular.util.GraphicHelpers;
 import steep.circular.util.Point;
 import steep.circular.view.shapes.DonutSegment;
 import steep.circular.view.shapes.TextCircle;
 
+import static android.R.attr.angle;
 import static steep.circular.util.GraphicHelpers.getAngleOfPoint;
 import static steep.circular.view.PaintPool.DATE_PAINT;
 import static steep.circular.view.PaintPool.DOT_PAINT;
@@ -89,6 +95,7 @@ public class CircleCalendarView extends View {
     Drawable pointer_small;
 
 
+
     public CircleCalendarView(Context context) {
         super(context);
         init();
@@ -114,6 +121,7 @@ public class CircleCalendarView extends View {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            setElevation(10.0f);
 //        }
+        update(null); // must be called before initDrawingObjects
         final float scale = getResources().getDisplayMetrics().density;
         radiusSeasonIn = (int) (RAD_SEASON_IN * scale + 0.5f);
         radiusSeasonOut = (int) (RAD_SEASON_OUT * scale + 0.5f);
@@ -129,9 +137,10 @@ public class CircleCalendarView extends View {
         pointer = ContextCompat.getDrawable(getContext(), R.drawable.ic_pointer);
         pointer_small = ContextCompat.getDrawable(getContext(), R.drawable.ic_pointer_small);
 
-
         currentDayAngle = currentDayOfYear * anglePerDay + 90;
-        update(null); // must be called before initDrawingObjects
+        if(currentDayAngle > 360) currentDayAngle-=360;
+        Log.d("INIT", "currentDayAngle=" + currentDayAngle);
+        resetPointer();
     }
 
     private void initDrawingObjects() {
@@ -167,6 +176,19 @@ public class CircleCalendarView extends View {
         anglePerDay = 360f / daysInYear;
     }
 
+    public int getMonthDayFromAngle(float angle){
+        int dayOfYear = (int) (angle/anglePerDay);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, Calendar.JANUARY);
+        cal.set(Calendar.DATE, 1);
+        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.add(Calendar.DATE, dayOfYear);
+        return cal.get(Calendar.DAY_OF_MONTH);
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         int xPad = getPaddingLeft() + getPaddingRight();
@@ -176,6 +198,7 @@ public class CircleCalendarView extends View {
         height = h - yPad;
 
         center = new Point(w / 2, h / 2);
+        Log.d("TOUCH", "center = " + center);
 
         initDrawingObjects();
 
@@ -226,7 +249,7 @@ public class CircleCalendarView extends View {
     private void drawMonths(Canvas canvas) {
         float startAngle = 90;
 
-        calendar_circle.setBounds((int) center.x-radiusSelectionOut, (int) center.y-radiusSelectionOut, (int) center.x+radiusSelectionOut,  (int) center.y+radiusSelectionOut);
+        calendar_circle.setBounds((int) center.x - radiusSelectionOut, (int) center.y - radiusSelectionOut, (int) center.x + radiusSelectionOut, (int) center.y + radiusSelectionOut);
         calendar_circle.draw(canvas);
 
         for (Month month : Month.values()) {
@@ -254,9 +277,11 @@ public class CircleCalendarView extends View {
 
     }
 
+    // TODO: draw bitmaps in correct density and correct size at correct position
     private void drawPointer(Canvas canvas) {
 
-        if(currentDayAngle - currentDrawAngle <= 0.5f){
+        Log.d("TOUCH", "day="+currentDayAngle + " draw="+currentDrawAngle);
+        if (Math.abs(currentDayAngle - currentDrawAngle) < 3) {
             float angle = currentDrawAngle;
 
             Point start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 40, angle, center);
@@ -264,15 +289,20 @@ public class CircleCalendarView extends View {
 
             TextCircle tc = new TextCircle(angle, radiusSelectionOut + 30 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
 
-
-
             canvas.save(Canvas.MATRIX_SAVE_FLAG);
-            canvas.rotate(angle, pointer.getBounds().centerX(), pointer.getBounds().centerY());
-            pointer.setBounds((int)start.x-70, (int)start.y-70, (int)start.x+70, (int)start.y+70);
+            canvas.rotate(angle, center.x, center.y);
+            pointer.setBounds((int)center.x + radiusSelectionOut + 40 -70, (int)center.y - 70, (int)center.x + radiusSelectionOut + 40 + 70, (int)center.y + 70);
             pointer.draw(canvas);
             canvas.restore();
 
-            tc.draw(canvas);
+
+//            canvas.save(Canvas.MATRIX_SAVE_FLAG);
+//            canvas.rotate(angle, pointer.getBounds().centerX(), pointer.getBounds().centerY());
+//            pointer.setBounds((int) start.x - 70, (int) start.y - 70, (int) start.x + 70, (int) start.y + 70);
+//            pointer.draw(canvas);
+//            canvas.restore();
+
+             tc.draw(canvas);
 
         } else {
             float angle = currentDrawAngle;
@@ -280,12 +310,14 @@ public class CircleCalendarView extends View {
             Point start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 40, currentDrawAngle, center);
             float rad = 30;
 
-            TextCircle tc = new TextCircle(angle, radiusSelectionOut + 30 + rad, String.valueOf(currentDayOfMonth), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));
+
+
+            TextCircle tc = new TextCircle(angle, radiusSelectionOut + 30 + rad, String.valueOf(getMonthDayFromAngle(angle)), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));// TODO: set Pointer only on real day angles and calculate correct day to be shown
 
 
             canvas.save(Canvas.MATRIX_SAVE_FLAG);
-            canvas.rotate(angle, pointer.getBounds().centerX(), pointer.getBounds().centerY());
-            pointer.setBounds((int) start.x - 70, (int) start.y - 70, (int) start.x + 70, (int) start.y + 70);
+            canvas.rotate(angle, center.x, center.y);
+            pointer.setBounds((int)center.x + radiusSelectionOut + 40 -70, (int)center.y - 70, (int)center.x + radiusSelectionOut + 40 + 70, (int)center.y + 70);
             pointer.draw(canvas);
             canvas.restore();
 
@@ -296,10 +328,16 @@ public class CircleCalendarView extends View {
 
 
             canvas.save(Canvas.MATRIX_SAVE_FLAG);
-            canvas.rotate(angle, pointer_small.getBounds().centerX(), pointer_small.getBounds().centerY());
-            pointer_small.setBounds((int) start.x - 30, (int) start.y - 30, (int) start.x + 30, (int) start.y + 30);
+            canvas.rotate(angle, center.x, center.y);
+            pointer_small.setBounds((int)center.x + radiusSelectionOut + 40 -30, (int)center.y - 30, (int)center.x + radiusSelectionOut + 40 + 30, (int)center.y + 30);
             pointer_small.draw(canvas);
             canvas.restore();
+
+////            canvas.save(Canvas.MATRIX_SAVE_FLAG);
+////            canvas.rotate(angle, pointer_small.getBounds().centerX(), pointer_small.getBounds().centerY());
+//            pointer_small.setBounds((int) start.x - 30, (int) start.y - 30, (int) start.x + 30, (int) start.y + 30);
+//            pointer_small.draw(canvas);
+////            canvas.restore();
         }
 
     }
@@ -332,7 +370,8 @@ public class CircleCalendarView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (pointer.getBounds().contains((int)touch.x, (int)touch.y)) {
+//                if (pointer.getBounds().contains((int) touch.x, (int) touch.y)) { // Bounds are not used anymore -> needed to calculate with angle
+                if(GraphicHelpers.getDistance(GraphicHelpers.pointOnCircle(radiusSelectionOut + 40, currentDrawAngle, center), touch) < 120){
                     float angle = getAngleOfPoint(touch, center);
                     touched = true;
 
@@ -349,6 +388,7 @@ public class CircleCalendarView extends View {
             case MotionEvent.ACTION_MOVE:
                 lastTouchAngle = getAngleOfPoint(touch, center);
                 currentDrawAngle = lastTouchAngle;
+//                Log.d("TOUCH", "Angle=" + lastTouchAngle);
                 invalidate();
                 return true;
 //            case MotionEvent.ACTION_UP:
@@ -373,7 +413,8 @@ public class CircleCalendarView extends View {
         this.events = list;
     }
 
-    public void resetPointer(){
+    public void resetPointer() {
         currentDrawAngle = currentDayAngle;
+        Log.d("TOUCH", "currentDdayAngle=" + currentDayAngle);
     }
 }

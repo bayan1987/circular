@@ -30,6 +30,9 @@ public class GraphicHelpers {
         float x = center.x + (float) cos(toRadians(angle)) * (radius);
         float y = center.y + (float) sin(toRadians(angle)) * (radius);
 
+        x = x < 1E-15 ? 0 : x;
+        y = y < 1E-15 ? 0 : y;
+
         return new Point(x,y);
     }
 

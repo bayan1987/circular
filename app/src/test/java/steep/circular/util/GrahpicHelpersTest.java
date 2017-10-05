@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class GrahpicHelpersTest{
 
-    @Test
+//    @Test
     public void testGetAngleOfPoint(){
 
         Point center = new Point(0,0);
@@ -65,6 +65,18 @@ public class GrahpicHelpersTest{
     }
 
     @Test
+    public void testGetPointOnCircle(){
+        System.out.println(GraphicHelpers.pointOnCircle(1, 90, new Point(2,2)));
+        System.out.println(GraphicHelpers.pointOnCircle(1, 90));
+
+        System.out.println(GraphicHelpers.pointOnCircle(1, 180));
+
+        System.out.println(GraphicHelpers.pointOnCircle(1, 270));
+
+        System.out.println(GraphicHelpers.pointOnCircle(1, 0));
+    }
+
+//    @Test
     public void testGetDistance(){
         Point center = new Point(0,0);
         Point point = new Point(2,0);

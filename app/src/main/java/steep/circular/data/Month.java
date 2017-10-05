@@ -41,4 +41,5 @@ public enum Month {
     }
 
     public int getSeason() {return season[this.getValue()-1]; }
+
 }
