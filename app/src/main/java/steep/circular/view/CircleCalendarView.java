@@ -27,12 +27,14 @@ import steep.circular.util.Point;
 import steep.circular.view.shapes.DonutSegment;
 import steep.circular.view.shapes.TextCircle;
 
+import static android.R.attr.angle;
 import static steep.circular.util.GraphicHelpers.getAngleOfPoint;
 import static steep.circular.view.PaintPool.DATE_PAINT;
 import static steep.circular.view.PaintPool.DOT_PAINT;
 import static steep.circular.view.PaintPool.POINTER_LINE_PAINT;
 import static steep.circular.view.PaintPool.POINTER_TEXT_PAINT;
 import static steep.circular.view.PaintPool.SELECTION_PAINT;
+import static steep.circular.view.PaintPool.SELECTION_PAINT_DARK;
 
 /**
  * Created by Tom Kretzschmar on 09.10.2016.
@@ -83,7 +85,7 @@ public class CircleCalendarView extends View {
     boolean touched = false;
     float currentDrawAngle = 0.0f;
 
-    double lastTime;
+//    double lastTime;
 
     float currentDayAngle = 0;
 
@@ -351,7 +353,7 @@ public class CircleCalendarView extends View {
                     lastTouchAngle = angle;
                     currentDrawAngle = angle;
 
-                    lastTime = System.currentTimeMillis();
+//                    lastTime = System.currentTimeMillis();
 
 //                    getParent().requestDisallowInterceptTouchEvent(true);
                     return true;

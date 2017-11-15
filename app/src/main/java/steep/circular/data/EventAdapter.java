@@ -7,34 +7,45 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import steep.circular.R;
+import steep.circular.activities.OnEventClickListener;
+import steep.circular.activities.TransitionUtils;
+
+import static android.R.attr.button;
+import static android.media.CamcorderProfile.get;
 
 /**
  * Created by Tom Kretzschmar on 18.01.2017.
  *
  */
 
-public class EventAdapter extends
-        RecyclerView.Adapter<EventAdapter.ViewHolder> {
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
+
+    private OnEventClickListener listener;
 
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class EventViewHolder extends RecyclerView.ViewHolder {
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
-        public Button eventButtonView;
+        View eventButtonView;
+        TextView eventText;
+        TextView eventTime;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
-        public ViewHolder(View itemView) {
+        EventViewHolder(View itemView) {
             // Stores the itemView in a public final member variable that can be used
-            // to access the context from any ViewHolder instance.
+            // to access the context from any EventViewHolder instance.
             super(itemView);
-
-            eventButtonView = (Button) itemView.findViewById(R.id.button_event);
+            eventButtonView = itemView.findViewById(R.id.event_item);
+            eventText = (TextView) itemView.findViewById(R.id.event_text);
+            eventTime = (TextView) itemView.findViewById(R.id.event_time);
         }
     }
 
@@ -44,9 +55,10 @@ public class EventAdapter extends
     private Context context;
 
     // Pass in the contact array into the constructor
-    public EventAdapter(Context context, List<Event> contacts) {
+    public EventAdapter(Context context, List<Event> contacts, OnEventClickListener listener) {
         eventList = contacts;
         this.context = context;
+        this.listener = listener;
     }
 
     // Easy access to the context object in the recyclerview
@@ -56,7 +68,7 @@ public class EventAdapter extends
 
     // Usually involves inflating a layout from XML and returning the holder
     @Override
-    public EventAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -64,19 +76,30 @@ public class EventAdapter extends
         View eventView = inflater.inflate(R.layout.item_event, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(eventView);
+        EventViewHolder viewHolder = new EventViewHolder(eventView);
         return viewHolder;
     }
 
     // Involves populating data into the item through holder
     @Override
-    public void onBindViewHolder(EventAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(EventViewHolder viewHolder, final int position) {
         // Get the data model based on position
         Event event = eventList.get(position);
 
         // Set item views based on your views and data model
-        Button button = viewHolder.eventButtonView;
-        button.setText(event.getTitle());
+        final View item = viewHolder.eventButtonView;
+        viewHolder.eventText.setText(event.getTitle());
+        if(event.getDate()!= null){
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+            viewHolder.eventTime.setText(format.format(event.getDate()));
+        }
+
+        item.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View view) {
+                                          listener.onPlaceClicked(item, TransitionUtils.getRecyclerViewTransitionName(position), position);
+                                      }
+                                  });
         Log.d("recycler", "title:" + event.getTitle());
     }
 

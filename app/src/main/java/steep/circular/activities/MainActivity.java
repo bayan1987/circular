@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,9 +39,10 @@ import steep.circular.dialog.DialogListener;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
 
-public class MainActivity extends AppCompatActivity implements DialogListener {
+public class MainActivity extends AppCompatActivity implements DialogListener, OnEventClickListener {
 
     public static final int READ_CALENDAR_REQUEST = 1;
+    public static final int TARGET_ALPHA = 72;
 
     private BottomSheetBehavior bottomSheetBehavior;
     ArrayAdapter<String> adapter;
@@ -88,24 +90,25 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         view = (CircleCalendarView) findViewById(R.id.calendar);
         view.setEvents(list);
 
-        List<Event> evList = list.get(start.getDayOfYear()+1); // TODO, Listendatum falsch
+        List<Event> evList = list.get(start.getDayOfYear());
 
 
         Log.d("recycler", "evlist:" + evList.size());
-        EventAdapter adapter2 = new EventAdapter(this, evList);
+        EventAdapter adapter2 = new EventAdapter(this, evList, this);
+
 
         LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.event_day_list);
         mRecyclerView.setLayoutManager(layoutManager);
-// TODO: RecyclerView is not shown.. maybe disable it
         mRecyclerView.setAdapter(adapter2);
 
         View bottomSheet = findViewById(R.id.bottom_sheet1);
+        bottomSheet.getBackground().setAlpha(TARGET_ALPHA);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 //        bottomSheetBehavior.setHideable(true);
 
         Resources r = getResources();
-        int px =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, r.getDisplayMetrics());
+        int px =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, r.getDisplayMetrics());
 
         bottomSheetBehavior.setPeekHeight(px);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -113,23 +116,28 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-//                switch (newState){
-//                    case BottomSheetBehavior.STATE_EXPANDED: bottomSheet.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorbgOpaque));
-//                        break;
-//                    case BottomSheetBehavior.STATE_COLLAPSED: bottomSheet.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorbgTransparent));
-//                        break;
-//                }
+                switch (newState){
+                    case BottomSheetBehavior.STATE_EXPANDED: //bottomSheet.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorbgOpaque));
+//                        Blurry.with(bottomSheet.getContext()).radius(25).sampling(2).onto((ViewGroup) bottomSheet);
+//                        Blurry.with(MainActivity.this).radius(25).sampling(2).onto((ViewGroup) findViewById(R.id.main_content));
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED: //bottomSheet.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorbgTransparent));
+                        break;
+                }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                // TODO: change background transparency when sliding up and down
-//                bottomSheet.setAlpha(1-(0.72f*(1-slideOffset)));
-//                bottomSheet.getBackground().setAlpha((int) (255-(183*(1-slideOffset))));
-//                int color = ContextCompat.getColor(getApplicationContext(), R.color.colorbgOpaque);
+////                bottomSheet.setAlpha(1-(0.72f*(1-slideOffset)));
+//                int diff = 255 - TARGET_ALPHA;
+//                int fraction = (int) (diff * slideOffset);
+//                int alpha = TARGET_ALPHA + fraction;
+//                Log.d("anim", "diff:" + diff + " | frac:" + fraction + " | target:" + TARGET_ALPHA + " | alpha:" + alpha);
+//                bottomSheet.getBackground().setAlpha(alpha);
+////                int color = ContextCompat.getColor(getApplicationContext(), R.color.colorbgOpaque);
 ////                bottomSheet.setBackgroundColor();
-////                Log.d("anim", "alpha:" + bottomSheet.getAlpha() + " |offset:" + slideOffset);
-//                Log.d("anim", "color:" + color);
+//                Log.d("anim", "alpha:" + bottomSheet.getBackground().getAlpha() + " |offset:" + slideOffset);
+////                Log.d("anim", "color:" + color);
 
             }
         });
@@ -305,5 +313,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
 
     public void onRightClick(View v) {
         view.toRight();
+    }
+
+    @Override
+    public void onPlaceClicked(View sharedView, String transitionName, final int position) {
+
     }
 }
