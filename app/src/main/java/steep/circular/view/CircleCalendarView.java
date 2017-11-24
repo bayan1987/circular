@@ -19,6 +19,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import steep.circular.R;
+import steep.circular.activities.MainActivity;
 import steep.circular.data.Event;
 import steep.circular.data.Month;
 import steep.circular.data.Weekday;
@@ -95,6 +96,7 @@ public class CircleCalendarView extends View {
     Bitmap pointer;
     Bitmap pointer_small;
     private boolean eventColors = true;
+    private MainActivity activity;
 
 
     public CircleCalendarView(Context context) {
@@ -299,7 +301,7 @@ public class CircleCalendarView extends View {
         TextCircle tc = new TextCircle(angle, radiusSelectionOut + 30 + rad, String.valueOf(getMonthDayFromAngle((angle + 270) % 360)), center, rad, paintPool.getPaint(POINTER_LINE_PAINT), paintPool.getPaint(POINTER_TEXT_PAINT));// TODO: set Pointer only on real day angles and calculate correct day to be shown; start all Angles at 1. January because otherwise dates are wrong calculated
 
 
-        canvas.save(Canvas.MATRIX_SAVE_FLAG);
+        canvas.save(Canvas.ALL_SAVE_FLAG);
         canvas.rotate(angle, center.x, center.y);
 //        Log.d(TAG, "DRAW: " + pointer.getScaledHeight(canvas));
         canvas.drawBitmap(pointer, (int)center.x + radiusSelectionOut + 40 - (pointer.getWidth()/2f), (int)center.y - (pointer.getHeight()/2f), null);
@@ -311,7 +313,7 @@ public class CircleCalendarView extends View {
         start = GraphicHelpers.pointOnCircle(radiusSelectionOut + 40, angle, center);
 
         if (Math.abs(currentDayAngle - currentDrawAngle) > 3) {
-            canvas.save(Canvas.MATRIX_SAVE_FLAG);
+            canvas.save(Canvas.ALL_SAVE_FLAG);
             canvas.rotate(angle, center.x, center.y);
             canvas.drawBitmap(pointer_small, (int)center.x + radiusSelectionOut + 40 - (pointer_small.getWidth()), (int)center.y - (pointer_small.getHeight()/2f), null);
 //            pointer_small.setBounds((int) center.x + radiusSelectionOut + 40 - 30, (int) center.y - 30, (int) center.x + radiusSelectionOut + 40 + 30, (int) center.y + 30);
@@ -357,7 +359,6 @@ public class CircleCalendarView extends View {
 
                     lastTouchAngle = angle;
                     currentDrawAngle = angle;
-
 //                    lastTime = System.currentTimeMillis();
 
 //                    getParent().requestDisallowInterceptTouchEvent(true);
@@ -369,6 +370,7 @@ public class CircleCalendarView extends View {
                 lastTouchAngle = getAngleOfPoint(touch, center);
                 currentDrawAngle = lastTouchAngle;
 //                Log.d("TOUCH", "Angle=" + lastTouchAngle);
+                activity.scroll((int)(currentDrawAngle + 270) % 360);
                 invalidate();
                 return true;
 //            case MotionEvent.ACTION_UP:
@@ -395,6 +397,7 @@ public class CircleCalendarView extends View {
 
     public void resetPointer() {
         currentDrawAngle = currentDayAngle;
+        if(activity!= null) activity.scroll(1+(int)(currentDrawAngle + 270) % 360);
         Log.d("TOUCH", "currentDdayAngle=" + currentDayAngle);
     }
 
@@ -407,5 +410,9 @@ public class CircleCalendarView extends View {
     public void toRight() {
         currentDrawAngle+=anglePerDay;
         invalidate();
+    }
+
+    public void setActivity(MainActivity activity) {
+        this.activity = activity;
     }
 }

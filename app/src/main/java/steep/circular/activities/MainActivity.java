@@ -33,26 +33,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import steep.circular.R;
+import steep.circular.data.Divider;
 import steep.circular.data.Event;
 import steep.circular.data.EventAdapter;
 import steep.circular.data.MyDate;
+import steep.circular.data.RecyclerItem;
 import steep.circular.dialog.CalendarDialog;
 import steep.circular.dialog.DialogListener;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
-import steep.circular.view.DetailsLayout;
 
-public class MainActivity extends AppCompatActivity implements DialogListener, OnEventClickListener {
+public class MainActivity extends AppCompatActivity implements DialogListener {
 
     public static final int READ_CALENDAR_REQUEST = 1;
     public static final int TARGET_ALPHA = 72;
 
 
-    Event event;
     CircleCalendarView view;
     CalendarService calSrv;
-    private String currentTransitionName;
-    private Scene detailsScene;
+    private RecyclerView mRecyclerView;
+    private List<RecyclerItem>  evList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,19 +91,23 @@ public class MainActivity extends AppCompatActivity implements DialogListener, O
         List<List<Event>> list = calSrv.getEventPerDayList(start, end);
         view = (CircleCalendarView) findViewById(R.id.calendar);
         view.setEvents(list);
+        view.setActivity(this);
 
+        evList = new ArrayList<>();
+        for(List<Event> l : list){
+            evList.addAll(l);
+            evList.add(new Divider("date"));
+        }
 
-        List<Event> evList = list.get(start.getDayOfYear());
-        event = evList.get(0);
+//        List<Event> evList = list.get(start.getDayOfYear());
         Log.d("recycler", "evlist:" + evList.size());
-        EventAdapter adapter2 = new EventAdapter(this, evList, this);
+        EventAdapter adapter2 = new EventAdapter(this, evList);
 
 
         LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.event_day_list);
+        mRecyclerView = (RecyclerView) findViewById(R.id.event_day_list);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter2);
-
 
         Resources r = getResources();
         int px =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, r.getDisplayMetrics());
@@ -218,10 +222,12 @@ public class MainActivity extends AppCompatActivity implements DialogListener, O
     public void onNegativeDialogReturn() {
 
     }
+    
+    public void scroll(int dayofyear){
 
-    @Override
-    public void onPlaceClicked(View sharedView, String transitionName, final int position) {
-        currentTransitionName = transitionName;
-        detailsScene = DetailsLayout.showScene(this, (ViewGroup) findViewById(R.id.main_content), sharedView, transitionName, event);
+        int pos = dayofyear - MyDate.getToday().getDayOfYear();
+        if(pos < 0) pos += 365;
+        Log.d("scroll", "day: "  + dayofyear + " pos: " + pos);
+        mRecyclerView.scrollToPosition(pos);
     }
 }

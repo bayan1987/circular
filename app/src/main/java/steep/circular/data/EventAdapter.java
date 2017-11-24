@@ -6,27 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import steep.circular.R;
-import steep.circular.activities.OnEventClickListener;
-import steep.circular.activities.TransitionUtils;
-
-import static android.R.attr.button;
-import static android.media.CamcorderProfile.get;
 
 /**
  * Created by Tom Kretzschmar on 18.01.2017.
  *
  */
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
+public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private OnEventClickListener listener;
 
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
@@ -49,16 +43,30 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
     }
 
+    static class DividerViewHolder extends RecyclerView.ViewHolder {
+        // Your holder should contain a member variable
+        // for any view that will be set as you render a row
+        View dividerView;
+        TextView dividerDate;
+
+        DividerViewHolder(View divider) {
+            // Stores the itemView in a public final member variable that can be used
+            // to access the context from any EventViewHolder instance.
+            super(divider);
+            dividerView = itemView.findViewById(R.id.divider_item);
+            dividerDate = (TextView) itemView.findViewById(R.id.divider_date);
+        }
+    }
+
     // Store a member variable for the contacts
-    private List<Event> eventList;
+    private List<RecyclerItem> eventList;
     // Store the context for easy access
     private Context context;
 
     // Pass in the contact array into the constructor
-    public EventAdapter(Context context, List<Event> contacts, OnEventClickListener listener) {
+    public EventAdapter(Context context, List<RecyclerItem> contacts) {
         eventList = contacts;
         this.context = context;
-        this.listener = listener;
     }
 
     // Easy access to the context object in the recyclerview
@@ -68,39 +76,66 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     // Usually involves inflating a layout from XML and returning the holder
     @Override
-    public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(viewType == RecyclerItem.TYPE_EVENT){
+            Context context = parent.getContext();
+            LayoutInflater inflater = LayoutInflater.from(context);
 
-        // Inflate the custom layout
-        View eventView = inflater.inflate(R.layout.item_event, parent, false);
+            // Inflate the custom layout
+            View eventView = inflater.inflate(R.layout.item_event, parent, false);
 
-        // Return a new holder instance
-        EventViewHolder viewHolder = new EventViewHolder(eventView);
-        return viewHolder;
+            // Return a new holder instance
+            EventViewHolder viewHolder = new EventViewHolder(eventView);
+            return viewHolder;
+        } else {
+            Context context = parent.getContext();
+            LayoutInflater inflater = LayoutInflater.from(context);
+
+            // Inflate the custom layout
+            View dividerView = inflater.inflate(R.layout.item_divider, parent, false);
+
+            // Return a new holder instance
+            DividerViewHolder viewHolder = new DividerViewHolder(dividerView);
+            return viewHolder;
+        }
     }
 
     // Involves populating data into the item through holder
     @Override
-    public void onBindViewHolder(EventViewHolder viewHolder, final int position) {
-        // Get the data model based on position
-        Event event = eventList.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
-        // Set item views based on your views and data model
-        final View item = viewHolder.eventButtonView;
-        viewHolder.eventText.setText(event.getTitle());
-        if(event.getDate()!= null){
-            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-            viewHolder.eventTime.setText(format.format(event.getDate()));
+        int type = getItemViewType(position);
+
+        if(type == RecyclerItem.TYPE_EVENT){
+            // Get the data model based on position
+            Event event = (Event) eventList.get(position);
+
+            EventViewHolder viewHolder = (EventViewHolder) holder;
+
+
+            // Set item views based on your views and data model
+            final View item = viewHolder.eventButtonView;
+            viewHolder.eventText.setText(event.getTitle());
+            if(event.getDate()!= null){
+                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                viewHolder.eventTime.setText(format.format(event.getDate()));
+            }
+
+            Log.d("recycler", "title:" + event.getTitle());
+        } else {
+            // Get the data model based on position
+            Divider divider = (Divider) eventList.get(position);
+
+            DividerViewHolder viewHolder = (DividerViewHolder) holder;
+
+
+            viewHolder.dividerDate.setText(divider.date);
+            // Set item views based on your views and data model
+            final View item = viewHolder.dividerView;
+
         }
 
-        item.setOnClickListener(new View.OnClickListener() {
-                                      @Override
-                                      public void onClick(View view) {
-                                          listener.onPlaceClicked(item, TransitionUtils.getRecyclerViewTransitionName(position), position);
-                                      }
-                                  });
-        Log.d("recycler", "title:" + event.getTitle());
+
     }
 
     // Returns the total count of items in the list
@@ -110,4 +145,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return eventList.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return eventList.get(position).getType();
+    }
 }

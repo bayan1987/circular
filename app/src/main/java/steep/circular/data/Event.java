@@ -7,7 +7,7 @@ import java.util.Date;
  *
  */
 
-public class Event {
+public class Event extends RecyclerItem{
 
     private long id;
     private String title;
@@ -92,5 +92,10 @@ public class Event {
         this.cal_id = cal_id;
         this.cal_title = cal_title;
         this.end = null;
+    }
+
+    @Override
+    public int getType() {
+        return TYPE_EVENT;
     }
 }
