@@ -207,6 +207,11 @@ public class CircleCalendarView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
+//    @Override
+//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         drawMonths(canvas);

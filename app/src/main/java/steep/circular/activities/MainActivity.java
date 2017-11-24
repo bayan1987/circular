@@ -14,12 +14,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Scene;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,19 +40,19 @@ import steep.circular.dialog.CalendarDialog;
 import steep.circular.dialog.DialogListener;
 import steep.circular.service.CalendarService;
 import steep.circular.view.CircleCalendarView;
+import steep.circular.view.DetailsLayout;
 
 public class MainActivity extends AppCompatActivity implements DialogListener, OnEventClickListener {
 
     public static final int READ_CALENDAR_REQUEST = 1;
     public static final int TARGET_ALPHA = 72;
 
-    private BottomSheetBehavior bottomSheetBehavior;
-    ArrayAdapter<String> adapter;
-    ArrayList<String> listItems = new ArrayList<>();
 
-
+    Event event;
     CircleCalendarView view;
     CalendarService calSrv;
+    private String currentTransitionName;
+    private Scene detailsScene;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,9 +92,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener, O
         view = (CircleCalendarView) findViewById(R.id.calendar);
         view.setEvents(list);
 
+
         List<Event> evList = list.get(start.getDayOfYear());
-
-
+        event = evList.get(0);
         Log.d("recycler", "evlist:" + evList.size());
         EventAdapter adapter2 = new EventAdapter(this, evList, this);
 
@@ -102,101 +104,14 @@ public class MainActivity extends AppCompatActivity implements DialogListener, O
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter2);
 
-        View bottomSheet = findViewById(R.id.bottom_sheet1);
-        bottomSheet.getBackground().setAlpha(TARGET_ALPHA);
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-//        bottomSheetBehavior.setHideable(true);
 
         Resources r = getResources();
         int px =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, r.getDisplayMetrics());
-
-        bottomSheetBehavior.setPeekHeight(px);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                switch (newState){
-                    case BottomSheetBehavior.STATE_EXPANDED: //bottomSheet.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorbgOpaque));
-//                        Blurry.with(bottomSheet.getContext()).radius(25).sampling(2).onto((ViewGroup) bottomSheet);
-//                        Blurry.with(MainActivity.this).radius(25).sampling(2).onto((ViewGroup) findViewById(R.id.main_content));
-                        break;
-                    case BottomSheetBehavior.STATE_COLLAPSED: //bottomSheet.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorbgTransparent));
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-////                bottomSheet.setAlpha(1-(0.72f*(1-slideOffset)));
-//                int diff = 255 - TARGET_ALPHA;
-//                int fraction = (int) (diff * slideOffset);
-//                int alpha = TARGET_ALPHA + fraction;
-//                Log.d("anim", "diff:" + diff + " | frac:" + fraction + " | target:" + TARGET_ALPHA + " | alpha:" + alpha);
-//                bottomSheet.getBackground().setAlpha(alpha);
-////                int color = ContextCompat.getColor(getApplicationContext(), R.color.colorbgOpaque);
-////                bottomSheet.setBackgroundColor();
-//                Log.d("anim", "alpha:" + bottomSheet.getBackground().getAlpha() + " |offset:" + slideOffset);
-////                Log.d("anim", "color:" + color);
-
-            }
-        });
-
-        ListView listView = (ListView) findViewById(R.id.event_list);
-
-
-        adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
-                listItems);
-        listView.setAdapter(adapter);
-        listView.getParent().requestDisallowInterceptTouchEvent(true);
-
-        listView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                view.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
-
-
-        for (int i = start.getDayOfYear(); i < 365; i++) { // TODO daysinyear
-            if (list != null && list.get(i) != null) {
-                for (int j = 0; j < list.get(i).size(); j++) {
-                    Event event = list.get(i).get(j);
-                    if(event.getDate() != null) {
-                        MyDate date = new MyDate(event.getDate());
-                        adapter.add(date + " | " + event.getTitle());
-                    } else {
-                        adapter.add("null" + " | " + event.getTitle());
-
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < start.getDayOfYear(); i++) { // TODO daysinyear
-            if (list != null && list.get(i) != null) {
-                for (int j = 0; j < list.get(i).size(); j++) {
-                    Event event = list.get(i).get(j);
-                    if(event.getDate() != null) {
-                        MyDate date = new MyDate(event.getDate());
-                        adapter.add(date + " | " + event.getTitle());
-                    } else {
-                        adapter.add("null" + " | " + event.getTitle());
-
-                    }
-                }
-            }
-        }
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        TextView textView = (TextView) findViewById(R.id.currentDayView);
-        textView.setText(MyDate.getToday().toString());
     }
 
     @Override
@@ -223,9 +138,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener, O
             startActivity(intent);
 
             return true;
-        }
-        if(id == R.id.bottomSheetSetting){
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
         if(id == R.id.filter_setting) {
             Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show();
@@ -307,16 +219,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener, O
 
     }
 
-    public void onLeftClick(View v) {
-        view.toLeft();
-    }
-
-    public void onRightClick(View v) {
-        view.toRight();
-    }
-
     @Override
     public void onPlaceClicked(View sharedView, String transitionName, final int position) {
-
+        currentTransitionName = transitionName;
+        detailsScene = DetailsLayout.showScene(this, (ViewGroup) findViewById(R.id.main_content), sharedView, transitionName, event);
     }
 }
