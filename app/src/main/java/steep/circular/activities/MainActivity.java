@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         evList = new ArrayList<>();
         for(List<Event> l : list){
             evList.addAll(l);
-            evList.add(new Divider("date"));
-        }
+            if (!l.isEmpty()) evList.add(new Divider("date"));
+        } // TODO: anstelle eines dividers, erstellen eines custom layouts für jeden tag, wo das datum als balken oben drüber steht. somit erigbt sich in der liste für den recyclerview nur ein eintrag pro tag. dadurch auch evtl besseres scrollen?
 
 //        List<Event> evList = list.get(start.getDayOfYear());
         Log.d("recycler", "evlist:" + evList.size());
@@ -222,7 +222,8 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     public void onNegativeDialogReturn() {
 
     }
-    
+
+    // TODO: scrollen ist falsch, da viel mehr events als tage vorhanden sind. es wird aber jedes event in der liste gezählt
     public void scroll(int dayofyear){
 
         int pos = dayofyear - MyDate.getToday().getDayOfYear();
